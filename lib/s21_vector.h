@@ -1,16 +1,21 @@
 #ifndef S21_CONTAINERS_LIB_S21_VECTOR_H_
 #define S21_CONTAINERS_LIB_S21_VECTOR_H_
 
-#include "stddef.h"
+#include <cstddef>
 
 template <class T>  // , class Allocator = std::allocator<T>
 class Vector {
-  // public:
-
- private:
   T* data;
-  size_t size;
-  size_t capacity;
+  size_t v_size;
+  size_t v_capacity;
+  
+ public:
+  size_t size() noexcept;
+
+
+
+ // private:
+  
 };
 
 #endif  // S21_CONTAINERS_LIB_S21_VECTOR_H_
