@@ -11,17 +11,9 @@ template<class T> size_t Vector<T>::capacity() const noexcept {
 template<class T> void Vector<T>::reserve(size_t n) {
     if (n <= v_capacity) return;
     T* new_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
-    size_t i = 0;
-     
-
     try {
-        for (; i < size, ++i) {
-            new (new_data + i) T(arr[i]);  // placement new (конструктор типа T по адресу (new_data + i) от arr[i])
-        }
+        std::uninitialized_copy(data, data + v_size, new_data);
     } catch (...) {
-        for (size_t j = 0; j < i, ++j) {
-            data[i].~T();
-        }
         delete[] reinterpret_cast<char*>(new_data);
         throw;
     }
