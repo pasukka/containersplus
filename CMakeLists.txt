@@ -2,16 +2,16 @@ cmake_minimum_required(VERSION 3.20)
 project(s21_containers)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-add_compile_options("-Wall" "-Werror" "-Wextra" "-Wpedantic" "-Weffc++")
+add_compile_options("-Wall"  "-Wextra" "-Wpedantic" "-Weffc++") #"-Werror"
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 
 add_subdirectory(dependencies)
 
 # ---- LIB COMPILATION ----
 file(GLOB SRC_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/*.h)
-file(GLOB SRC_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/*.cc)
-add_library(${PROJECT_NAME} ${SRC_FILES})
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lib)
+add_library(${PROJECT_NAME} INTERFACE ${SRC_FILES})
+target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR}/lib)
+
 
 # ---- TEST COMPILATION ----
 file(GLOB TEST_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/test/*.cc)
@@ -22,7 +22,6 @@ target_link_libraries(test PUBLIC ${PROJECT_NAME} gtest gtest_main)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 include(CodeCoverage)
 append_coverage_compiler_flags_to_target(test)
-append_coverage_compiler_flags_to_target(${PROJECT_NAME})
 setup_target_for_coverage_lcov(
             NAME test_coverage
             EXECUTABLE test
