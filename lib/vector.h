@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory>
 
-template <class T>  // , class Allocator = std::allocator<T>
+template <class T, class Allocator = std::allocator<T>>
 class Vector {
   T* data;
   size_t v_size;
@@ -15,14 +15,57 @@ class Vector {
   // --------------------- MEMBER FUNCTION ---------------------
   Vector() noexcept : data(nullptr), v_size(0), v_capacity(0){};
 
-  // T& operator=();
+  Vector(size_t n) : data(nullptr), v_size(0), v_capacity(0) {
+    // TODO: 
+    // size_type max_size() const;
+    // std::vector larger than max_size()
+
+
+    try {
+      reserve(n);
+      for (size_t i = 0; i < n; ++i) {
+        new (data + i) T(0);
+      }
+    } catch (...) {
+      throw;
+    }
+    v_size = n;
+  };
+
+  ~Vector() {
+    if (data != nullptr) {
+      delete[] data;
+    }
+  };
+
+  // constexpr ~vector();
+
+  Vector(const Vector& other) : data(nullptr), v_size(0), v_capacity(0) {
+    reserve(other.v_capacity);
+    for (size_t i = 0; i < other.v_size; ++i) {
+      data[i] = other.data[i];
+    }
+    v_size = other.v_size;
+  };
+
+  T& operator=(const Vector& other) {
+    if (*this != other) {
+      Vector copy(other);
+      swap(copy);
+    }
+    return *this;
+  };
+
+  // Vector<int>(const Vector<int>&)
 
   // --------------------- ELEMENT ACCESS ---------------------
   T& operator[](size_t i) { return data[i]; };
+
   const T& operator[](size_t i) const { return data[i]; };
+
   T& at(size_t i) {
     if (i >= v_size) {
-      throw std::out_of_range("Index out of range");
+      throw std::out_of_range("Index out of range.");
     }
     return data[i];
   };
@@ -33,20 +76,21 @@ class Vector {
   size_t capacity() const noexcept { return v_capacity; };
 
   void reserve(size_t n) {
-    if (n <= v_capacity) return;
-    T* new_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
-    try {
-      std::uninitialized_copy(data, data + v_size, new_data);
-    } catch (...) {
-      delete[] reinterpret_cast<char*>(new_data);
-      throw;
+    if (n > v_capacity) {
+      T* new_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
+      try {
+        std::uninitialized_copy(data, data + v_size, new_data);
+      } catch (...) {
+        delete[] reinterpret_cast<char*>(new_data);
+        throw;
+      }
+      for (size_t i = 0; i < v_size; ++i) {
+        data[i].~T();
+      }
+      delete[] reinterpret_cast<char*>(data);
+      data = new_data;
+      v_capacity = n;
     }
-    for (size_t i = 0; i < v_size; ++i) {
-      data[i].~T();
-    }
-    delete[] reinterpret_cast<char*>(data);
-    data = new_data;
-    v_capacity = n;
   };
 
   // void shrink_to_fit();
@@ -88,6 +132,12 @@ class Vector {
   void pop_back() {
     --v_size;
     data[v_size].~T();
+  };
+
+  void swap(Vector& other) {
+    std::swap(data, other.data);
+    std::swap(v_size, other.v_size);
+    std::swap(v_capacity, other.v_capacity);
   };
 
   // private:
