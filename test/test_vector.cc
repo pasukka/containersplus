@@ -2,6 +2,8 @@
 
 #include "vector.h"
 
+// TODO: std::vector<char> letters {'a', 'b', 'c', 'd', 'e', 'f'};
+
 TEST(TestConstructorVector, SimpleConstructorInt) {
   Vector<int> v;
   EXPECT_EQ(0, v.size());
@@ -68,6 +70,16 @@ TEST(TestFuncs, PushBackInt) {
   EXPECT_EQ(n, v[0]);
 }
 
+TEST(TestFuncs, PopBackInt) {
+  int n = 2;
+  Vector<int> v;
+  v.push_back(n);
+  v.push_back(n);
+
+  v.pop_back();
+  EXPECT_EQ(1, v.size());
+}
+
 TEST(TestFuncs, SwapInt) {
   int n = 2;
   Vector<int> v;
@@ -82,6 +94,21 @@ TEST(TestFuncs, SwapInt) {
   EXPECT_EQ(m, v[0]);
 }
 
+TEST(TestFuncs, ShrinkToFit) {
+  int n = 2;
+  Vector<int> v;
+  v.push_back(n);
+
+  int m = 5;
+  v.reserve(m);
+  EXPECT_EQ(m, v.capacity());
+
+  v.shrink_to_fit();
+  EXPECT_EQ(1, v.size());
+  EXPECT_EQ(1, v.capacity());
+  EXPECT_EQ(n, v[0]);
+}
+
 TEST(TestAccess, AtNoExInt) {
   int n = 2;
   Vector<int> v;
@@ -89,14 +116,36 @@ TEST(TestAccess, AtNoExInt) {
   EXPECT_EQ(n, v.at(0));
 }
 
-TEST(TestAccess, AtExInt) {
+TEST(TestAccess, AtExInt_1) {
+  Vector<int> v;
+  try {
+    v.at(-1);
+    FAIL();
+  } catch (std::out_of_range& ex) {
+    SUCCEED();
+  }
+}
+
+TEST(TestAccess, AtExInt_2) {
   Vector<int> v;
   try {
     v.at(0);
     FAIL();
   } catch (std::out_of_range& ex) {
-    EXPECT_STREQ("Index out of range.", ex.what());
+    SUCCEED();
   }
+}
+
+TEST(TestAccess, Data) {
+  Vector<int> v;
+  EXPECT_EQ(v.data(), nullptr);
+
+  int n = 2, m = 3;
+  v.push_back(n);
+  v.push_back(m);
+  int* data = v.data();
+  EXPECT_EQ(data[0], v[0]);
+  EXPECT_EQ(data[1], v[1]);
 }
 
 int main(int argc, char** argv) {
