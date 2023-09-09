@@ -34,7 +34,7 @@ leaks:
 	$(LEAK_CMD)
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem ${SRC_DIR}/*.${SRC_EXT} ${SRC_DIR}/*.h
+	cppcheck --enable=all --language=c++ --suppress=missingIncludeSystem ${SRC_DIR}/*.${SRC_EXT} ${SRC_DIR}/*.h
 
 gcov_report: buildDebug
 	@cmake --build buildDebug --target test_coverage
