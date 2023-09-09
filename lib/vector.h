@@ -7,24 +7,28 @@
 
 template <class T, class Allocator = std::allocator<T>>
 class Vector {
-  T* data;
-  size_t v_size;
-  size_t v_capacity;
+  using size_type = std::size_t;  // std::allocator<T>::size_type;
+  using alloc_traits = std::allocator_traits<Allocator>;
+  using reference = T&;
+  using const_reference = const T&;
+
+  T* v_data;
+  size_type v_size;
+  size_type v_capacity;
+  Allocator v_alloc;
 
  public:
   // --------------------- MEMBER FUNCTION ---------------------
-  Vector() noexcept : data(nullptr), v_size(0), v_capacity(0){};
+  Vector() noexcept
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
 
-  Vector(size_t n) : data(nullptr), v_size(0), v_capacity(0) {
-    // TODO: 
-    // size_type max_size() const;
-    // std::vector larger than max_size()
-
-
+  Vector(size_type n)
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
+    check_size(n);
     try {
       reserve(n);
-      for (size_t i = 0; i < n; ++i) {
-        new (data + i) T(0);
+      for (size_type i = 0; i < n; ++i) {
+        new (v_data + i) T(0);
       }
     } catch (...) {
       throw;
@@ -32,23 +36,24 @@ class Vector {
     v_size = n;
   };
 
+  // TODO: vector() noexcept(noexcept(Allocator()));
+
   ~Vector() {
-    if (data != nullptr) {
-      delete[] data;
+    if (v_data != nullptr) {
+      delete[] v_data;
     }
   };
 
-  // constexpr ~vector();
-
-  Vector(const Vector& other) : data(nullptr), v_size(0), v_capacity(0) {
+  Vector(const Vector& other)
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
     reserve(other.v_capacity);
-    for (size_t i = 0; i < other.v_size; ++i) {
-      data[i] = other.data[i];
+    for (size_type i = 0; i < other.v_size; ++i) {
+      v_data[i] = other.v_data[i];
     }
     v_size = other.v_size;
   };
 
-  T& operator=(const Vector& other) {
+  reference operator=(const Vector& other) {
     if (*this != other) {
       Vector copy(other);
       swap(copy);
@@ -56,58 +61,87 @@ class Vector {
     return *this;
   };
 
+  // TODO: vector& operator=( vector&& other );
+
   // Vector<int>(const Vector<int>&)
 
   // --------------------- ELEMENT ACCESS ---------------------
-  T& operator[](size_t i) { return data[i]; };
-
-  const T& operator[](size_t i) const { return data[i]; };
-
-  T& at(size_t i) {
-    if (i >= v_size) {
-      throw std::out_of_range("Index out of range.");
+  reference at(size_type pos) {
+    if (pos > v_size || !v_size) {
+      throw std::out_of_range(
+          "vector::_M_range_check: __n (which is" + std::to_string(pos) +
+          ">= this->size() (which is " + std::to_string(pos) + ")");
     }
-    return data[i];
+    return v_data[pos];
   };
 
+  const_reference at(size_type pos) const {
+    if (pos > v_size || !v_size) {
+      throw std::out_of_range(
+          "vector::_M_range_check: __n (which is" + std::to_string(pos) +
+          ">= this->size() (which is " + std::to_string(pos) + ")");
+    }
+    return v_data[pos];
+  };
+
+  reference operator[](size_type i) { return v_data[i]; };
+  const reference operator[](size_type i) const { return v_data[i]; };
+
+  reference front() { return data[0]; };
+  const_reference front() const { return data[0]; };
+
+  reference back() { return data[v_size - 1]; };
+  const_reference back() const { return data[v_size - 1]; };
+
+  T* data() noexcept { return v_data; };
+  const T* data() const noexcept { return v_data; };
+
   // --------------------- CAPACITY ---------------------
-  size_t size() const noexcept { return v_size; };
+  size_type size() const noexcept { return v_size; };
 
-  size_t capacity() const noexcept { return v_capacity; };
+  size_type capacity() const noexcept { return v_capacity; };
 
-  void reserve(size_t n) {
+  void reserve(size_type n) {
     if (n > v_capacity) {
-      T* new_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
+      T* new_v_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
       try {
-        std::uninitialized_copy(data, data + v_size, new_data);
+        std::uninitialized_copy(v_data, v_data + v_size, new_v_data);
       } catch (...) {
-        delete[] reinterpret_cast<char*>(new_data);
+        delete[] reinterpret_cast<char*>(new_v_data);
         throw;
       }
-      for (size_t i = 0; i < v_size; ++i) {
-        data[i].~T();
+      for (size_type i = 0; i < v_size; ++i) {
+        v_data[i].~T();
       }
-      delete[] reinterpret_cast<char*>(data);
-      data = new_data;
+      delete[] reinterpret_cast<char*>(v_data);
+      v_data = new_v_data;
       v_capacity = n;
     }
   };
 
-  // void shrink_to_fit();
+  size_type max_size() const { return alloc_traits::max_size(v_alloc); };
+
+  void shrink_to_fit() {
+    size_type old_cap = v_capacity;
+    for (size_type i = v_size; i < old_cap; ++i) {
+      v_data[i].~T();
+      v_capacity--;
+    }
+  };
 
   // --------------------- ITERATORS ---------------------
 
   // --------------------- MODIFIERS ---------------------
-  void resize(size_t n, const T& value = T()) {
+  void resize(size_type n, const T& value = T()) {
     if (n > v_capacity) reserve(n);
-    size_t i = v_size;
+    size_type i = v_size;
     try {
       for (; i < n; ++i) {
-        new (data + i) T(value);
+        new (v_data + i) T(value);
       }
     } catch (...) {
-      for (size_t j = v_size; j < i; ++j) {
-        data[j].~T();
+      for (size_type j = v_size; j < i; ++j) {
+        v_data[j].~T();
       }
       throw;
     }
@@ -121,26 +155,32 @@ class Vector {
       reserve(2 * v_size + 1);
     }
     try {
-      new (data + v_size) T(value);
+      new (v_data + v_size) T(value);
       ++v_size;
     } catch (...) {
-      data[v_size].~T();
+      v_data[v_size].~T();
       throw;
     }
   };
 
   void pop_back() {
     --v_size;
-    data[v_size].~T();
+    v_data[v_size].~T();
   };
 
   void swap(Vector& other) {
-    std::swap(data, other.data);
+    std::swap(v_data, other.v_data);
     std::swap(v_size, other.v_size);
     std::swap(v_capacity, other.v_capacity);
   };
 
-  // private:
+ private:
+  int check_size(size_type size) const {
+    if (max_size() < size) {
+      throw std::invalid_argument("std::vector larger than max_size()");
+    }
+    return true;
+  }
 };
 
 template <>
