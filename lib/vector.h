@@ -27,21 +27,22 @@ class Vector {
   explicit Vector(size_type count, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
     // *this(count, 0);
-    check_size(count);
-    try {
-      reserve(count);
-      for (size_type i = 0; i < count; ++i) {
-        new (v_data + i) T(0);  // TODO: реально ли так? если да, то надо try
-                                // catch и освобождать
-      }
-    } catch (...) {
-      throw;
-    }
-    v_size = count;
+    v_construct(count, 0, alloc);
+    // 
+    // try {
+    //   reserve(count);
+    //   for (size_type i = 0; i < count; ++i) {
+    //     new (v_data + i) T(0);  // TODO: реально ли так? если да, то надо try
+    //                             // catch и освобождать
+    //   }
+    // } catch (...) {
+    //   throw;
+    // }
+    // v_size = count;
   };
 
-  Vector(size_type count, const T& value, const Allocator& alloc = Allocator())
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+  v_construct(size_type count, const T& value, const Allocator& alloc = Allocator()) {
+    check_size(count);
     try {
       reserve(count);
       for (size_type i = 0; i < count; ++i) {
@@ -52,6 +53,21 @@ class Vector {
       throw;
     }
     v_size = count;
+  }
+
+  Vector(size_type count, const T& value, const Allocator& alloc = Allocator())
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+    v_construct(count, value, alloc);
+    // try {
+    //   reserve(count);
+    //   for (size_type i = 0; i < count; ++i) {
+    //     new (v_data + i) T(value);  // TODO: реально ли так? если да, то надо
+    //                                 // try catch и освобождать
+    //   }
+    // } catch (...) {
+    //   throw;
+    // }
+    // v_size = count;
   };
 
   // ------- Copy -------
