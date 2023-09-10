@@ -7,10 +7,14 @@
 
 template <class T, class Allocator = std::allocator<T>>
 class Vector {
-  using size_type = std::size_t;  // std::allocator<T>::size_type;
   using alloc_traits = std::allocator_traits<Allocator>;
   using reference = T&;
   using const_reference = const T&;
+
+  typedef typename alloc_traits::value_type allocator_type;
+  typedef typename alloc_traits::size_type size_type;
+  // typedef typename alloc_traits::pointer pointer;
+  // typedef typename alloc_traits::const_pointer const_pointer;
 
   T* v_data;
   size_type v_size;
@@ -26,48 +30,12 @@ class Vector {
 
   explicit Vector(size_type count, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-    // *this(count, 0);
-    v_construct(count, 0, alloc);
-    // 
-    // try {
-    //   reserve(count);
-    //   for (size_type i = 0; i < count; ++i) {
-    //     new (v_data + i) T(0);  // TODO: реально ли так? если да, то надо try
-    //                             // catch и освобождать
-    //   }
-    // } catch (...) {
-    //   throw;
-    // }
-    // v_size = count;
+    v_construct(count, 0);
   };
-
-  v_construct(size_type count, const T& value, const Allocator& alloc = Allocator()) {
-    check_size(count);
-    try {
-      reserve(count);
-      for (size_type i = 0; i < count; ++i) {
-        new (v_data + i) T(value);  // TODO: реально ли так? если да, то надо
-                                    // try catch и освобождать
-      }
-    } catch (...) {
-      throw;
-    }
-    v_size = count;
-  }
 
   Vector(size_type count, const T& value, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-    v_construct(count, value, alloc);
-    // try {
-    //   reserve(count);
-    //   for (size_type i = 0; i < count; ++i) {
-    //     new (v_data + i) T(value);  // TODO: реально ли так? если да, то надо
-    //                                 // try catch и освобождать
-    //   }
-    // } catch (...) {
-    //   throw;
-    // }
-    // v_size = count;
+    v_construct(count, value);
   };
 
   // ------- Copy -------
@@ -78,25 +46,49 @@ class Vector {
   };
 
   Vector(const Vector& other, const Allocator& alloc)
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
     reserve(other.v_capacity);
     copyElems(other);
   };
 
   // ------- Move -------
-  // vector( vector&& other ) noexcept;
+  Vector(Vector&& other) noexcept
+      : v_data(other.v_data),
+        v_size(other.v_size),
+        v_capacity(other.v_capacity),
+        v_alloc(other.v_alloc) {
+    other.v_data = nullptr;
+    other.v_size = 0;
+    other.v_capacity = 0;
+    other.v_alloc = Allocator();
+  };
 
-  // vector( vector&& other, const Allocator& alloc );
+  Vector(Vector&& other, const Allocator& alloc)
+      : v_data(other.v_data),
+        v_size(other.v_size),
+        v_capacity(other.v_capacity),
+        v_alloc(alloc) {
+    other.v_data = nullptr;
+    other.v_size = 0;
+    other.v_capacity = 0;
+    other.v_alloc = Allocator();
+  };
 
-  // ------- initializer_list -------
-  // vector( std::initializer_list<T> init, const Allocator& alloc = Allocator()
-  // );
+  // ------- Initializer list -------
+  // Vector(std::initializer_list<T> init, const Allocator& alloc =
+  // Allocator()){ };
 
   // ------- Destructors -------
   ~Vector() {
     if (v_data != nullptr) {
       delete[] v_data;
     }
+  };
+
+  // ------- Assign -------
+  void assign(size_type count, const T& value) { 
+    v_construct(count, value); 
+    // TODO: убирать лишнее из вектора, если count < size ?
   };
 
   // ------- = -------
@@ -108,7 +100,14 @@ class Vector {
     return *this;
   };
 
-  // TODO: vector& operator=( vector&& other );
+  Vector& operator=(Vector&& other) noexcept {
+    swap(other);
+    return *this;
+  };
+
+  // Vector& operator=(std::initializer_list<T> ilist);
+
+  allocator_type get_allocator() const noexcept { return v_alloc; };
 
   // --------------------- ELEMENT ACCESS ---------------------
   reference at(size_type pos) {
@@ -146,7 +145,7 @@ class Vector {
 
   size_type capacity() const noexcept { return v_capacity; };
 
-  void reserve(size_type n) {
+  void reserve(size_type n) {  // TODO: как использовать аллокатор??????????
     if (n > v_capacity) {
       T* new_v_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
       try {
@@ -217,15 +216,32 @@ class Vector {
     std::swap(v_data, other.v_data);
     std::swap(v_size, other.v_size);
     std::swap(v_capacity, other.v_capacity);
+    std::swap(v_alloc, other.v_alloc);
   };
 
  private:
+  void v_construct(size_type count, const T& value) {
+    check_size(count);
+    try {
+      reserve(count);
+      for (size_type i = 0; i < count; ++i) {
+        new (v_data + i) T(value);  // TODO: реально ли так? если да, то надо
+                                    // try catch и освобождать
+                                    // еще нужно аллокатор использовать
+      }
+    } catch (...) {
+      throw;
+    }
+    v_size = count;
+  }
+
   int check_size(size_type size) const {
     if (max_size() < size) {
       throw std::invalid_argument("std::vector larger than max_size()");
     }
     return true;
   }
+
   void copyElems(const Vector& other) {
     for (size_type i = 0; i < other.v_size; ++i) {
       v_data[i] = other.v_data[i];
