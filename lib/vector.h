@@ -19,40 +19,71 @@ class Vector {
 
  public:
   // --------------------- MEMBER FUNCTION ---------------------
-  Vector() noexcept
+
+  // ------- Constructors -------
+  Vector() noexcept(noexcept(Allocator()))
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
 
-  Vector(size_type n)
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
-    check_size(n);
+  explicit Vector(size_type count, const Allocator& alloc = Allocator())
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+    // *this(count, 0);
+    check_size(count);
     try {
-      reserve(n);
-      for (size_type i = 0; i < n; ++i) {
-        new (v_data + i) T(0);
+      reserve(count);
+      for (size_type i = 0; i < count; ++i) {
+        new (v_data + i) T(0);  // TODO: реально ли так? если да, то надо try
+                                // catch и освобождать
       }
     } catch (...) {
       throw;
     }
-    v_size = n;
+    v_size = count;
   };
 
-  // TODO: vector() noexcept(noexcept(Allocator()));
+  Vector(size_type count, const T& value, const Allocator& alloc = Allocator())
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+    try {
+      reserve(count);
+      for (size_type i = 0; i < count; ++i) {
+        new (v_data + i) T(value);  // TODO: реально ли так? если да, то надо
+                                    // try catch и освобождать
+      }
+    } catch (...) {
+      throw;
+    }
+    v_size = count;
+  };
 
+  // ------- Copy -------
+  Vector(const Vector& other)
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
+    reserve(other.v_capacity);
+    copyElems(other);
+  };
+
+  Vector(const Vector& other, const Allocator& alloc)
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
+    reserve(other.v_capacity);
+    copyElems(other);
+  };
+
+  // ------- Move -------
+  // vector( vector&& other ) noexcept;
+
+  // vector( vector&& other, const Allocator& alloc );
+
+  // ------- initializer_list -------
+  // vector( std::initializer_list<T> init, const Allocator& alloc = Allocator()
+  // );
+
+  // ------- Destructors -------
   ~Vector() {
     if (v_data != nullptr) {
       delete[] v_data;
     }
   };
 
-  Vector(const Vector& other)
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
-    reserve(other.v_capacity);
-    for (size_type i = 0; i < other.v_size; ++i) {
-      v_data[i] = other.v_data[i];
-    }
-    v_size = other.v_size;
-  };
-
+  // ------- = -------
   reference operator=(const Vector& other) {
     if (*this != other) {
       Vector copy(other);
@@ -62,8 +93,6 @@ class Vector {
   };
 
   // TODO: vector& operator=( vector&& other );
-
-  // Vector<int>(const Vector<int>&)
 
   // --------------------- ELEMENT ACCESS ---------------------
   reference at(size_type pos) {
@@ -180,6 +209,12 @@ class Vector {
       throw std::invalid_argument("std::vector larger than max_size()");
     }
     return true;
+  }
+  void copyElems(const Vector& other) {
+    for (size_type i = 0; i < other.v_size; ++i) {
+      v_data[i] = other.v_data[i];
+    }
+    v_size = other.v_size;
   }
 };
 
