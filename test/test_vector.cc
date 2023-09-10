@@ -46,6 +46,58 @@ TEST(TestConstructorVector, ConstructorWithParamIntAndValue) {
   }
 }
 
+TEST(TestConstructorVector, Move_1) {
+  int n = 3;
+  Vector<int> v;
+  v.push_back(n);
+
+  Vector<int> v2(std::move(v));
+  EXPECT_EQ(0, v.capacity());
+  EXPECT_EQ(0, v.size());
+
+  EXPECT_EQ(1, v2.size());
+  EXPECT_EQ(n, v2[0]);
+}
+
+TEST(TestConstructorVector, Move_2) {
+  int n = 3;
+  Vector<int> v;
+  v.push_back(n);
+
+  Vector<int> v2 = std::move(v);
+  EXPECT_EQ(0, v.capacity());
+  EXPECT_EQ(0, v.size());
+
+  EXPECT_EQ(1, v2.size());
+  EXPECT_EQ(n, v2[0]);
+}
+
+TEST(TestConstructorVector, Assign_1) {
+  int n = 3;
+  Vector<int> v;
+  v.push_back(n);
+  v.push_back(n + 2);
+
+  int count = 1;
+  v.assign(count, 10);
+  EXPECT_EQ(count, v.size());
+  EXPECT_EQ(10, v[0]);
+  EXPECT_NE(5, v[1]);
+}
+
+TEST(TestConstructorVector, Assign_2) {
+  int n = 3;
+  Vector<int> v;
+  v.push_back(n);
+  v.push_back(n + 2);
+
+  int count = 3;
+  v.assign(count, 10);
+  EXPECT_EQ(count, v.size());
+  EXPECT_EQ(10, v[0]);
+  EXPECT_EQ(10, v[2]);
+}
+
 TEST(TestConstructorVector, ConstructFromAnotherInt_1) {
   int n = 3;
   Vector<int> v(2);
