@@ -32,6 +32,20 @@ TEST(TestConstructorVector, ConstructorWithParamInt) {
   }
 }
 
+TEST(TestConstructorVector, ConstructorWithParamIntAndValue) {
+  int n = 2;
+  int m = 5;
+  try {
+    Vector<int> v(n, m);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(m, v[0]);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
 TEST(TestConstructorVector, ConstructFromAnotherInt_1) {
   int n = 3;
   Vector<int> v(2);
