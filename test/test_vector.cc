@@ -54,9 +54,30 @@ TEST(TestConstructorVectorConst, ConstructorWithParamInt) {
     EXPECT_EQ(n, v.size());
     EXPECT_EQ(n, v.capacity());
     EXPECT_EQ(0, v[0]);
+    EXPECT_EQ(0, v.at(0));
     SUCCEED();
   } catch (...) {
     FAIL();
+  }
+}
+
+TEST(TestConstructorVectorConst, At_1) {
+  const Vector<int> v(2);
+  try {
+    EXPECT_EQ(0, v.at(10));
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
+TEST(TestConstructorVectorConst, At_2) {
+  const Vector<int> v(2);
+  try {
+    EXPECT_EQ(0, v.at(-1));
+    FAIL();
+  } catch (...) {
+    SUCCEED();
   }
 }
 
@@ -313,6 +334,29 @@ TEST(TestAccess, Data) {
   int* data = v.data();
   EXPECT_EQ(data[0], v[0]);
   EXPECT_EQ(data[1], v[1]);
+}
+
+TEST(TestAccessConst, Data) {
+  const Vector<int> v(2);
+  const int* data = v.data();
+  EXPECT_EQ(data[0], 0);
+  EXPECT_EQ(data[1], 0);
+}
+
+TEST(TestAccess, FrontBack) {
+  Vector<int> v;
+  int n = 2, m = 3;
+  v.push_back(n);
+  v.push_back(m);
+
+  EXPECT_EQ(v.front(), n);
+  EXPECT_EQ(v.back(), m);
+}
+
+TEST(TestAccessConst, FrontBack) {
+  const Vector<int> v(2);
+  EXPECT_EQ(v.front(), 0);
+  EXPECT_EQ(v.back(), 0);
 }
 
 int main(int argc, char** argv) {
