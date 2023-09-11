@@ -86,10 +86,7 @@ class Vector {
   };
 
   // ------- Assign -------
-  void assign(size_type count, const T& value) { 
-    v_construct(count, value); 
-    // TODO: убирать лишнее из вектора, если count < size ?
-  };
+  void assign(size_type count, const T& value) { v_construct(count, value); };
 
   // ------- = -------
   reference operator=(const Vector& other) {
@@ -105,7 +102,7 @@ class Vector {
     return *this;
   };
 
-  // Vector& operator=(std::initializer_list<T> ilist);
+  // TODO: Vector& operator=(std::initializer_list<T> ilist);
 
   allocator_type get_allocator() const noexcept { return v_alloc; };
 
@@ -141,7 +138,13 @@ class Vector {
   const T* data() const noexcept { return v_data; };
 
   // --------------------- CAPACITY ---------------------
+  bool empty() const noexcept {
+    // return (begin() == end());
+  };
+  
   size_type size() const noexcept { return v_size; };
+
+  size_type max_size() const noexcept { return alloc_traits::max_size(v_alloc); };
 
   size_type capacity() const noexcept { return v_capacity; };
 
@@ -163,8 +166,6 @@ class Vector {
     }
   };
 
-  size_type max_size() const { return alloc_traits::max_size(v_alloc); };
-
   void shrink_to_fit() {
     size_type old_cap = v_capacity;
     for (size_type i = v_size; i < old_cap; ++i) {
@@ -176,11 +177,15 @@ class Vector {
   // --------------------- ITERATORS ---------------------
 
   // --------------------- MODIFIERS ---------------------
-  void resize(size_type n, const T& value = T()) {
-    if (n > v_capacity) reserve(n);
+  void resize(size_type count) {
+    resize(count, 0);
+  };
+
+  void resize(size_type count, const T& value = T()) {
+    if (count > v_capacity) reserve(count);
     size_type i = v_size;
     try {
-      for (; i < n; ++i) {
+      for (; i < count; ++i) {
         new (v_data + i) T(value);
       }
     } catch (...) {
@@ -189,15 +194,13 @@ class Vector {
       }
       throw;
     }
-    if (n < v_size) {
-      v_size = n;
+    if (count < v_size) {
+      v_size = count;
     }
   };
 
   void push_back(const T& value) {
-    if ((v_capacity == v_size)) {
-      reserve(2 * v_size + 1);
-    }
+    check_reserve();
     try {
       new (v_data + v_size) T(value);
       ++v_size;
@@ -207,12 +210,19 @@ class Vector {
     }
   };
 
+  void push_back(T&& value) {
+    check_reserve();
+    // сначала наверное копировать
+    // если что-то пошло не так, то удалить
+    // если все ок то освободить поданое value
+  };
+
   void pop_back() {
     --v_size;
     v_data[v_size].~T();
   };
 
-  void swap(Vector& other) {
+  void swap(Vector& other) noexcept {
     std::swap(v_data, other.v_data);
     std::swap(v_size, other.v_size);
     std::swap(v_capacity, other.v_capacity);
@@ -241,6 +251,12 @@ class Vector {
     }
     return true;
   }
+
+  void check_reserve() {
+    if ((v_capacity == v_size)) {
+      reserve(2 * v_size + 1);
+    }
+  }  
 
   void copyElems(const Vector& other) {
     for (size_type i = 0; i < other.v_size; ++i) {
