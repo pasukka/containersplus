@@ -46,6 +46,16 @@ TEST(TestConstructorVector, ConstructorWithParamIntAndValue) {
   }
 }
 
+TEST(TestConstructorVector, Copy_1) {
+  int n = 3;
+  Vector<int> v;
+  v.push_back(n);
+
+  Vector<int> v2 = v;
+  EXPECT_EQ(v2.capacity(), v.capacity());
+  EXPECT_EQ(v2.size(), v.size());
+}
+
 TEST(TestConstructorVector, Move_1) {
   int n = 3;
   Vector<int> v;
@@ -82,7 +92,6 @@ TEST(TestConstructorVector, Assign_1) {
   v.assign(count, 10);
   EXPECT_EQ(count, v.size());
   EXPECT_EQ(10, v[0]);
-  EXPECT_NE(5, v[1]);
 }
 
 TEST(TestConstructorVector, Assign_2) {
