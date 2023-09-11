@@ -129,14 +129,14 @@ class Vector {
   reference operator[](size_type i) { return v_data[i]; };
   const reference operator[](size_type i) const { return v_data[i]; };
 
-  reference front() { return data[0]; }; // это
-  const_reference front() const { return data[0]; };// это
+  reference front() { return v_data[0]; };
+  const_reference front() const { return v_data[0]; };
 
-  reference back() { return data[v_size - 1]; };// это
-  const_reference back() const { return data[v_size - 1]; };// это
+  reference back() { return v_data[v_size - 1]; };
+  const_reference back() const { return v_data[v_size - 1]; };
 
   T* data() noexcept { return v_data; };
-  const T* data() const noexcept { return v_data; };// это
+  const T* data() const noexcept { return v_data; };
 
   // --------------------- CAPACITY ---------------------
   bool empty() const noexcept {
