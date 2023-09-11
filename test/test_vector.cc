@@ -10,9 +10,24 @@ TEST(TestConstructorVector, SimpleConstructorInt) {
   EXPECT_EQ(0, v.capacity());
 }
 
+TEST(TestConstructorVectorConst, SimpleConstructorInt) {
+  const Vector<int> v;
+  EXPECT_EQ(0, v.size());
+  EXPECT_EQ(0, v.capacity());
+}
+
 TEST(TestConstructorVector, SimpleConstructorIntEx) {
   try {
     Vector<int> v(-2);
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
+TEST(TestConstructorVectorConst, SimpleConstructorIntEx) {
+  try {
+    const Vector<int> v(-2);
     FAIL();
   } catch (...) {
     SUCCEED();
@@ -32,11 +47,38 @@ TEST(TestConstructorVector, ConstructorWithParamInt) {
   }
 }
 
+TEST(TestConstructorVectorConst, ConstructorWithParamInt) {
+  int n = 2;
+  try {
+    const Vector<int> v(n);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(0, v[0]);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
 TEST(TestConstructorVector, ConstructorWithParamIntAndValue) {
   int n = 2;
   int m = 5;
   try {
     Vector<int> v(n, m);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(m, v[0]);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(TestConstructorVectorConst, ConstructorWithParamIntAndValue) {
+  int n = 2;
+  int m = 5;
+  try {
+    const Vector<int> v(n, m);
     EXPECT_EQ(n, v.size());
     EXPECT_EQ(n, v.capacity());
     EXPECT_EQ(m, v[0]);
@@ -129,6 +171,56 @@ TEST(TestConstructorVector, ConstructFromAnotherInt_2) {
   for (size_t i = 0; i < v.size(); ++i) {
     EXPECT_EQ(v[i], v2[i]);
   }
+}
+
+TEST(TestConstructorVector, ConstructFromEqual_1) {
+  int n = 3;
+  Vector<int> v(2);
+  v.push_back(n);
+  Vector<int> v2 = v;
+  EXPECT_EQ(v.capacity(), v2.capacity());
+  EXPECT_EQ(v.size(), v2.size());
+  for (size_t i = 0; i < v.size(); ++i) {
+    EXPECT_EQ(v[i], v2[i]);
+  }
+}
+
+TEST(TestFuncs, ResizeInt_1) {
+  int n = 10;
+  int m = 2;
+  Vector<int> v;
+  v.push_back(n);
+  v.resize(m);
+  EXPECT_EQ(n, v[0]);
+  EXPECT_EQ(m, v.size());
+}
+
+TEST(TestFuncs, ResizeInt_2) {
+  int n = 10;
+  int m = 5;
+  int y = 60;
+  Vector<int> v;
+  v.push_back(n);
+  v.resize(m, y);
+
+  EXPECT_EQ(n, v[0]);
+  EXPECT_EQ(y, v[1]);
+  EXPECT_EQ(y, v[4]);
+  EXPECT_EQ(m, v.size());
+}
+
+TEST(TestFuncs, ResizeInt_3) {
+  int n = 10;
+  int m = 10;
+  int y = 60;
+  Vector<int> v;
+  v.push_back(n);
+  v.resize(m, y);
+
+  EXPECT_EQ(n, v[0]);
+  EXPECT_EQ(y, v[1]);
+  EXPECT_EQ(y, v[4]);
+  EXPECT_EQ(m, v.size());
 }
 
 TEST(TestFuncs, ReserveInt) {
