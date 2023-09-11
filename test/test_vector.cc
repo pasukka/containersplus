@@ -297,6 +297,18 @@ TEST(TestFuncs, ShrinkToFit) {
   EXPECT_EQ(n, v[0]);
 }
 
+TEST(TestFuncs, Clear) {
+  int n = 2;
+  Vector<int> v;
+  v.push_back(n);
+  v.push_back(n);
+  size_t cap = v.capacity();
+
+  v.clear();
+  EXPECT_EQ(0, v.size());
+  EXPECT_EQ(cap, v.capacity());
+}
+
 TEST(TestAccess, AtNoExInt) {
   int n = 2;
   Vector<int> v;
