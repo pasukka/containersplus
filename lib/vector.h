@@ -192,6 +192,29 @@ class Vector {
     }
   };
 
+  void clear() noexcept { v_size = 0; };
+
+  // iterator insert(const_iterator pos, const T& value);
+
+  // iterator insert(const_iterator pos, T&& value );
+
+  // iterator insert(const_iterator pos, size_type count, const T& value)
+
+  // template< class InputIt >
+  // iterator insert(const_iterator pos, InputIt first, InputIt last);
+
+  // iterator insert(const_iterator pos, std::initializer_list<T> ilist);
+
+  // template< class... Args >
+  // iterator emplace( const_iterator pos, Args&&... args );
+
+  // iterator erase(const_iterator pos);
+
+  // iterator erase( const_iterator first, const_iterator last );
+
+  // template< class... Args >
+  // reference emplace_back( Args&&... args );
+
   void push_back(const T& value) {
     check_reserve();
     try {
