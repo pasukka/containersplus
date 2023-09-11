@@ -10,6 +10,7 @@ class Vector {
   using alloc_traits = std::allocator_traits<Allocator>;
   using reference = T&;
   using const_reference = const T&;
+  using value_type = T;
 
   typedef typename alloc_traits::value_type allocator_type;
   typedef typename alloc_traits::size_type size_type;
@@ -116,7 +117,7 @@ class Vector {
     return v_data[pos];
   };
 
-  const_reference at(size_type pos) const {
+  const_reference at(size_type pos) const {  // это
     if (pos > v_size || !v_size) {
       throw std::out_of_range(
           "vector::_M_range_check: __n (which is" + std::to_string(pos) +
@@ -128,23 +129,25 @@ class Vector {
   reference operator[](size_type i) { return v_data[i]; };
   const reference operator[](size_type i) const { return v_data[i]; };
 
-  reference front() { return data[0]; };
-  const_reference front() const { return data[0]; };
+  reference front() { return data[0]; }; // это
+  const_reference front() const { return data[0]; };// это
 
-  reference back() { return data[v_size - 1]; };
-  const_reference back() const { return data[v_size - 1]; };
+  reference back() { return data[v_size - 1]; };// это
+  const_reference back() const { return data[v_size - 1]; };// это
 
   T* data() noexcept { return v_data; };
-  const T* data() const noexcept { return v_data; };
+  const T* data() const noexcept { return v_data; };// это
 
   // --------------------- CAPACITY ---------------------
   bool empty() const noexcept {
-    // return (begin() == end());
+      // return (begin() == end());
   };
-  
+
   size_type size() const noexcept { return v_size; };
 
-  size_type max_size() const noexcept { return alloc_traits::max_size(v_alloc); };
+  size_type max_size() const noexcept {
+    return alloc_traits::max_size(v_alloc);
+  };
 
   size_type capacity() const noexcept { return v_capacity; };
 
@@ -178,24 +181,14 @@ class Vector {
 
   // --------------------- MODIFIERS ---------------------
   void resize(size_type count) {
-    resize(count, 0);
+    if (count != v_size) {
+      make_resize(count, 0);
+    }
   };
 
-  void resize(size_type count, const T& value = T()) {
-    if (count > v_capacity) reserve(count);
-    size_type i = v_size;
-    try {
-      for (; i < count; ++i) {
-        new (v_data + i) T(value);
-      }
-    } catch (...) {
-      for (size_type j = v_size; j < i; ++j) {
-        v_data[j].~T();
-      }
-      throw;
-    }
-    if (count < v_size) {
-      v_size = count;
+  void resize(size_type count, const value_type& value) {
+    if (count != v_size) {
+      make_resize(count, value);
     }
   };
 
@@ -256,7 +249,7 @@ class Vector {
     if ((v_capacity == v_size)) {
       reserve(2 * v_size + 1);
     }
-  }  
+  }
 
   void copyElems(const Vector& other) {
     for (size_type i = 0; i < other.v_size; ++i) {
@@ -264,6 +257,22 @@ class Vector {
     }
     v_size = other.v_size;
   }
+
+  void make_resize(size_type count, const value_type& value) {
+    if (count > v_capacity) reserve(count);
+    size_type i = v_size;
+    try {
+      for (; i < count; ++i) {
+        new (v_data + i) T(value);
+      }
+    } catch (...) {
+      for (size_type j = v_size; j < i; ++j) {
+        v_data[j].~T();
+      }
+      throw;
+    }
+    v_size = count;
+  };
 };
 
 template <>
