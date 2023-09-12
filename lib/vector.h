@@ -82,13 +82,7 @@ class vector {
   // ------- Initializer list -------
   vector(std::initializer_list<T> init, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-    reserve(init.size());
-    size_type pos = 0;
-    for (auto element : init) {
-      construct_elements(pos + 1, element, pos);
-      ++pos;
-    }
-    v_size = init.size();
+    *this = init;
   };
 
   // ------- Destructors -------
@@ -117,7 +111,16 @@ class vector {
     return *this;
   };
 
-  // vector& operator=(std::initializer_list<T> ilist);
+  vector& operator=(std::initializer_list<T> ilist) {
+    reserve(ilist.size());
+    size_type pos = 0;
+    for (auto element : ilist) {
+      construct_elements(pos + 1, element, pos);
+      ++pos;
+    }
+    v_size = ilist.size();
+    return *this;
+  };
 
   allocator_type get_allocator() const noexcept { return v_alloc; };
 
