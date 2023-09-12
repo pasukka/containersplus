@@ -11,11 +11,16 @@ class vector {
   using reference = T&;
   using const_reference = const T&;
   using value_type = T;
+  using pointer = T*;
+  using const_pointer = const T*;
+  using iterator = pointer;
+  using const_iterator = const_pointer;
+
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   typedef typename alloc_traits::value_type allocator_type;
   typedef typename alloc_traits::size_type size_type;
-  typedef typename alloc_traits::pointer iterator;
-  typedef typename alloc_traits::const_pointer const_iterator;
 
   T* v_data;
   size_type v_size;
@@ -201,6 +206,26 @@ class vector {
   const_iterator end() const noexcept { return v_data + v_size; };
 
   const_iterator cend() const noexcept { return v_data + v_size; };
+
+  reverse_iterator rbegin() noexcept { return reverse_iterator(end()); };
+
+  const_reverse_iterator rbegin() const noexcept {
+    return const_reverse_iterator(end());
+  };
+
+  const_reverse_iterator crbegin() const noexcept {
+    return const_reverse_iterator(end());
+  };
+
+  reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
+
+  const_reverse_iterator rend() const noexcept {
+    return const_reverse_iterator(begin());
+  };
+
+  const_reverse_iterator crend() const noexcept {
+    return const_reverse_iterator(begin());
+  };
 
   // --------------------- MODIFIERS ---------------------
   void resize(size_type count) {
