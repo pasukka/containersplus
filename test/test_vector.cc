@@ -16,6 +16,18 @@ TEST(TestConstructorVectorConst, SimpleConstructorInt) {
   EXPECT_EQ(0, v.capacity());
 }
 
+TEST(TestConstructorVector, SimpleConstructorChar) {
+  Vector<char> v;
+  EXPECT_EQ(0, v.size());
+  EXPECT_EQ(0, v.capacity());
+}
+
+TEST(TestConstructorVectorConst, SimpleConstructorChar) {
+  const Vector<char> v;
+  EXPECT_EQ(0, v.size());
+  EXPECT_EQ(0, v.capacity());
+}
+
 TEST(TestConstructorVector, SimpleConstructorIntEx) {
   try {
     Vector<int> v(-2);
@@ -28,6 +40,24 @@ TEST(TestConstructorVector, SimpleConstructorIntEx) {
 TEST(TestConstructorVectorConst, SimpleConstructorIntEx) {
   try {
     const Vector<int> v(-2);
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
+TEST(TestConstructorVector, SimpleConstructorCharEx) {
+  try {
+    Vector<char> v(-2);
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
+TEST(TestConstructorVectorConst, SimpleConstructorCharEx) {
+  try {
+    const Vector<char> v(-2);
     FAIL();
   } catch (...) {
     SUCCEED();
@@ -61,6 +91,34 @@ TEST(TestConstructorVectorConst, ConstructorWithParamInt) {
   }
 }
 
+
+TEST(TestConstructorVector, ConstructorWithParamChar) {
+  int n = 2;
+  try {
+    Vector<char> v(n);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(0, v[0]);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(TestConstructorVectorConst, ConstructorWithParamChar) {
+  int n = 2;
+  try {
+    const Vector<char> v(n);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(0, v[0]);
+    EXPECT_EQ(0, v.at(0));
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
 TEST(TestConstructorVectorConst, At_1) {
   const Vector<int> v(2);
   try {
@@ -73,6 +131,26 @@ TEST(TestConstructorVectorConst, At_1) {
 
 TEST(TestConstructorVectorConst, At_2) {
   const Vector<int> v(2);
+  try {
+    EXPECT_EQ(0, v.at(-1));
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
+TEST(TestConstructorVectorConst, At_3) {
+  const Vector<char> v(2);
+  try {
+    EXPECT_EQ(0, v.at(10));
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
+TEST(TestConstructorVectorConst, At_4) {
+  const Vector<char> v(2);
   try {
     EXPECT_EQ(0, v.at(-1));
     FAIL();
@@ -98,6 +176,34 @@ TEST(TestConstructorVector, ConstructorWithParamIntAndValue) {
 TEST(TestConstructorVectorConst, ConstructorWithParamIntAndValue) {
   int n = 2;
   int m = 5;
+  try {
+    const Vector<int> v(n, m);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(m, v[0]);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(TestConstructorVector, ConstructorWithParamValueAndValue) {
+  char n = 'a';
+  char m = 'b';
+  try {
+    Vector<int> v(n, m);
+    EXPECT_EQ(n, v.size());
+    EXPECT_EQ(n, v.capacity());
+    EXPECT_EQ(m, v[0]);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(TestConstructorVectorConst, ConstructorWithParamValueAndValue) {
+  char n = 'a';
+  char m = 'b';
   try {
     const Vector<int> v(n, m);
     EXPECT_EQ(n, v.size());
@@ -256,6 +362,13 @@ TEST(TestFuncs, PushBackInt) {
   Vector<int> v;
   v.push_back(n);
   EXPECT_EQ(n, v[0]);
+}
+
+TEST(TestFuncs, PushBackMoveInt) {
+  int n = 2;
+  Vector<int> v;
+  v.push_back(std::move(n));
+  EXPECT_EQ(2, v[0]);
 }
 
 TEST(TestFuncs, PopBackInt) {
