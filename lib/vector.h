@@ -29,7 +29,7 @@ class vector {
   vector() noexcept(noexcept(Allocator()))
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
 
-  vector(size_type count, const Allocator& alloc = Allocator())
+  explicit vector(size_type count, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
     construct_elements(count);
   };
@@ -75,9 +75,21 @@ class vector {
     other.v_alloc = Allocator();
   };
 
+  // template< class InputIt >
+  // vector( InputIt first, InputIt last,
+  //   const Allocator& alloc = Allocator() );
+
   // ------- Initializer list -------
-  // vector(std::initializer_list<T> init, const Allocator& alloc =
-  // Allocator()){ };
+  vector(std::initializer_list<T> init, const Allocator& alloc = Allocator())
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+    reserve(init.size());
+    size_type pos = 0;
+    for (auto element : init) {
+      construct_elements(pos + 1, element, pos);
+      ++pos;
+    }
+    v_size = init.size();
+  };
 
   // ------- Destructors -------
   ~vector() {
