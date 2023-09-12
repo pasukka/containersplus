@@ -169,13 +169,6 @@ class vector {
     }
   };
 
-  void destroy_data(size_type start, size_type end) {
-    for (size_type i = start; i < end; ++i) {
-      v_alloc.destroy(v_data + i);
-      v_capacity--;
-    }
-  }
-
   void shrink_to_fit() {
     size_type old_cap = v_capacity;
     destroy_data(v_size, old_cap);
@@ -288,6 +281,13 @@ class vector {
       v_data[i] = other.v_data[i];
     }
     v_size = other.v_size;
+  }
+
+  void destroy_data(size_type start, size_type end) {
+    for (size_type i = start; i < end; ++i) {
+      v_alloc.destroy(v_data + i);
+      v_capacity--;
+    }
   }
 };
 
