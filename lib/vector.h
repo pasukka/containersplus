@@ -6,7 +6,7 @@
 #include <memory>
 
 template <class T, class Allocator = std::allocator<T>>
-class Vector {
+class vector {
   using alloc_traits = std::allocator_traits<Allocator>;
   using reference = T&;
   using const_reference = const T&;
@@ -26,34 +26,34 @@ class Vector {
   // --------------------- MEMBER FUNCTION ---------------------
 
   // ------- Constructors -------
-  Vector() noexcept(noexcept(Allocator()))
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {};
+  vector() noexcept(noexcept(Allocator()))
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
 
-  explicit Vector(size_type count, const Allocator& alloc = Allocator())
+  vector(size_type count, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-    v_construct(count, 0);
+    construct_elements(count);
   };
 
-  Vector(size_type count, const T& value, const Allocator& alloc = Allocator())
+  vector(size_type count, const T& value, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-    v_construct(count, value);
+    construct_elements(count, value);
   };
 
   // ------- Copy -------
-  Vector(const Vector& other)
+  vector(const vector& other)
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
     reserve(other.v_capacity);
     copy_elems(other);
   };
 
-  Vector(const Vector& other, const Allocator& alloc)
+  vector(const vector& other, const Allocator& alloc)
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
     reserve(other.v_capacity);
     copy_elems(other);
   };
 
   // ------- Move -------
-  Vector(Vector&& other) noexcept
+  vector(vector&& other) noexcept
       : v_data(other.v_data),
         v_size(other.v_size),
         v_capacity(other.v_capacity),
@@ -64,7 +64,7 @@ class Vector {
     other.v_alloc = Allocator();
   };
 
-  Vector(Vector&& other, const Allocator& alloc)
+  vector(vector&& other, const Allocator& alloc)
       : v_data(other.v_data),
         v_size(other.v_size),
         v_capacity(other.v_capacity),
@@ -76,34 +76,36 @@ class Vector {
   };
 
   // ------- Initializer list -------
-  // Vector(std::initializer_list<T> init, const Allocator& alloc =
+  // vector(std::initializer_list<T> init, const Allocator& alloc =
   // Allocator()){ };
 
   // ------- Destructors -------
-  ~Vector() {
+  ~vector() {
     if (v_data != nullptr) {
-      delete[] v_data;
+      v_alloc.deallocate(v_data, v_capacity);
     }
   };
 
   // ------- Assign -------
-  void assign(size_type count, const T& value) { v_construct(count, value); };
+  void assign(size_type count, const T& value) {
+    construct_elements(count, value);
+  };
 
   // ------- Equal = -------
-  reference operator=(const Vector& other) {
+  reference operator=(const vector& other) {
     if (*this != other) {
-      Vector copy(other);
+      vector copy(other);
       swap(copy);
     }
     return *this;
   };
 
-  Vector& operator=(Vector&& other) noexcept {
+  vector& operator=(vector&& other) noexcept {
     swap(other);
     return *this;
   };
 
-  // TODO: Vector& operator=(std::initializer_list<T> ilist);
+  // vector& operator=(std::initializer_list<T> ilist);
 
   allocator_type get_allocator() const noexcept { return v_alloc; };
 
@@ -139,9 +141,9 @@ class Vector {
   const T* data() const noexcept { return v_data; };
 
   // --------------------- CAPACITY ---------------------
-  bool empty() const noexcept {
-      // return (begin() == end());
-  };
+  // bool empty() const noexcept {
+  // return (begin() == end());
+  // };
 
   size_type size() const noexcept { return v_size; };
 
@@ -151,30 +153,32 @@ class Vector {
 
   size_type capacity() const noexcept { return v_capacity; };
 
-  void reserve(size_type n) {  // TODO: как использовать аллокатор??????????
+  void reserve(size_type n) {
     if (n > v_capacity) {
-      T* new_v_data = reinterpret_cast<T*>(new char[n * sizeof(T)]);
+      T* new_v_data = v_alloc.allocate(n);
       try {
         std::uninitialized_copy(v_data, v_data + v_size, new_v_data);
       } catch (...) {
-        delete[] reinterpret_cast<char*>(new_v_data);
+        v_alloc.deallocate(new_v_data, n);
         throw;
       }
-      for (size_type i = 0; i < v_size; ++i) {
-        v_data[i].~T();
-      }
-      delete[] reinterpret_cast<char*>(v_data);
+      destroy_data(0, v_size);
+      v_alloc.deallocate(v_data, v_capacity);
       v_data = new_v_data;
       v_capacity = n;
     }
   };
 
-  void shrink_to_fit() {
-    size_type old_cap = v_capacity;
-    for (size_type i = v_size; i < old_cap; ++i) {
-      v_data[i].~T();
+  void destroy_data(size_type start, size_type end) {
+    for (size_type i = start; i < end; ++i) {
+      v_alloc.destroy(v_data + i);
       v_capacity--;
     }
+  }
+
+  void shrink_to_fit() {
+    size_type old_cap = v_capacity;
+    destroy_data(v_size, old_cap);
   };
 
   // --------------------- ITERATORS ---------------------
@@ -182,13 +186,13 @@ class Vector {
   // --------------------- MODIFIERS ---------------------
   void resize(size_type count) {
     if (count != v_size) {
-      make_resize(count, 0);
+      construct_elements(count, 0, v_size);
     }
   };
 
   void resize(size_type count, const value_type& value) {
     if (count != v_size) {
-      make_resize(count, value);
+      construct_elements(count, value, v_size);
     }
   };
 
@@ -231,7 +235,7 @@ class Vector {
     v_data[v_size].~T();
   };
 
-  void swap(Vector& other) noexcept {
+  void swap(vector& other) noexcept {
     std::swap(v_data, other.v_data);
     std::swap(v_size, other.v_size);
     std::swap(v_capacity, other.v_capacity);
@@ -239,16 +243,18 @@ class Vector {
   };
 
  private:
-  void v_construct(size_type count, const T& value) {
+  void construct_elements(size_type count, const T& val = 0,
+                          size_type start = 0) {
     check_size(count);
+    reserve(count);
     try {
-      reserve(count);
-      for (size_type i = 0; i < count; ++i) {
-        new (v_data + i) T(value);  // TODO: реально ли так? если да, то надо
-                                    // try catch и освобождать
-                                    // еще нужно аллокатор использовать
+      for (size_t i = start; i < count; ++i) {
+        v_alloc.construct(v_data + i, val);
       }
     } catch (...) {
+      for (size_t i = start; i < count; ++i) {
+        v_alloc.destroy(v_data + i);
+      }
       throw;
     }
     v_size = count;
@@ -256,12 +262,12 @@ class Vector {
 
   void push(const T& value) {
     try {
-      new (v_data + v_size) T(value);
-      ++v_size;
+      v_alloc.construct(v_data + v_size, value);
     } catch (...) {
-      v_data[v_size].~T();
+      v_alloc.destroy(v_data + v_size);
       throw;
     }
+    ++v_size;
   }
 
   int check_size(size_type size) const {
@@ -277,31 +283,15 @@ class Vector {
     }
   }
 
-  void copy_elems(const Vector& other) {
+  void copy_elems(const vector& other) {
     for (size_type i = 0; i < other.v_size; ++i) {
       v_data[i] = other.v_data[i];
     }
     v_size = other.v_size;
   }
-
-  void make_resize(size_type count, const value_type& value) {
-    if (count > v_capacity) reserve(count);
-    size_type i = v_size;
-    try {
-      for (; i < count; ++i) {
-        new (v_data + i) T(value);
-      }
-    } catch (...) {
-      for (size_type j = v_size; j < i; ++j) {
-        v_data[j].~T();
-      }
-      throw;
-    }
-    v_size = count;
-  };
 };
 
 template <>
-class Vector<bool> {};
+class vector<bool> {};
 
 #endif  // CONTAINERS_LIB_VECTOR_H_
