@@ -103,11 +103,11 @@ class vector {
   };
 
   // ------- Equal = -------
-  reference operator=(const vector& other) {
-    if (*this != other) {
-      vector copy(other);
-      swap(copy);
-    }
+  vector& operator=(const vector& other) {
+    // if (this != other) {
+    vector copy(other);
+    swap(copy);
+    // }
     return *this;
   };
 
@@ -161,9 +161,7 @@ class vector {
   const T* data() const noexcept { return v_data; };
 
   // --------------------- CAPACITY ---------------------
-  // bool empty() const noexcept {
-  // return (begin() == end());
-  // };
+  bool empty() const noexcept { return (begin() == end()); };
 
   size_type size() const noexcept { return v_size; };
 
@@ -214,7 +212,7 @@ class vector {
   };
 
   const_reverse_iterator crbegin() const noexcept {
-    return const_reverse_iterator(end());
+    return const_reverse_iterator(cend());
   };
 
   reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
@@ -224,7 +222,7 @@ class vector {
   };
 
   const_reverse_iterator crend() const noexcept {
-    return const_reverse_iterator(begin());
+    return const_reverse_iterator(cbegin());
   };
 
   // --------------------- MODIFIERS ---------------------
