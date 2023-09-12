@@ -43,13 +43,13 @@ class Vector {
   Vector(const Vector& other)
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
     reserve(other.v_capacity);
-    copyElems(other);
+    copy_elems(other);
   };
 
   Vector(const Vector& other, const Allocator& alloc)
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
     reserve(other.v_capacity);
-    copyElems(other);
+    copy_elems(other);
   };
 
   // ------- Move -------
@@ -277,7 +277,7 @@ class Vector {
     }
   }
 
-  void copyElems(const Vector& other) {
+  void copy_elems(const Vector& other) {
     for (size_type i = 0; i < other.v_size; ++i) {
       v_data[i] = other.v_data[i];
     }
