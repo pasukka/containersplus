@@ -224,6 +224,31 @@ TEST(TestConstructorvector, Copy_1) {
   EXPECT_EQ(v2.size(), v.size());
 }
 
+TEST(TestConstructorvector, Copy_2) {
+  int n = 3;
+  vector<int> v;
+  v.push_back(n);
+
+  vector<int> v2;
+  v2 = v;
+  EXPECT_EQ(v2.capacity(), v.capacity());
+  EXPECT_EQ(v2.size(), v.size());
+}
+
+TEST(TestConstructorvector, Copy_3) {
+  int n = 3;
+  vector<int> v;
+  v.push_back(n);
+  size_t cap = v.capacity();
+  size_t size = v.size();
+
+  vector<int> v2;
+  v2 = std::move(v);
+  EXPECT_NE(v2.capacity(), v.capacity());
+  EXPECT_NE(v2.size(), v.size());
+  EXPECT_EQ(v2.capacity(), cap);
+  EXPECT_EQ(v2.size(), size);
+}
 TEST(TestConstructorvector, Move_1) {
   int n = 3;
   vector<int> v;
@@ -627,56 +652,8 @@ TEST(TestIterConst, Crbegin) {
 }
 
 // Tests for ends contain leaks because we reach element after vector.
-// There will be 16 leaks for 8 tests: one for our implementation
+// There will be 8 leaks for 4 tests: one for our implementation
 // and another for real vector.
-
-TEST(TestIter, End) {
-  vector<char> letters = {'g', 'h'};
-  std::vector<char> letters_std = {'g', 'h'};
-  auto it = letters.end();
-  auto std_it = letters_std.end();
-  for (size_t i = letters_std.size() - 1; i > 0; --i) {
-    EXPECT_EQ(*it, *std_it);
-    --it;
-    --std_it;
-  }
-}
-
-TEST(TestIterConst, End) {
-  const vector<char> letters = {'g', 'h'};
-  const std::vector<char> letters_std = {'g', 'h'};
-  auto it = letters.end();
-  auto std_it = letters_std.end();
-  for (size_t i = letters_std.size() - 1; i > 0; --i) {
-    EXPECT_EQ(*it, *std_it);
-    --it;
-    --std_it;
-  }
-}
-
-TEST(TestIter, Cend) {
-  vector<char> letters = {'g', 'h'};
-  std::vector<char> letters_std = {'g', 'h'};
-  auto it = letters.cend();
-  auto std_it = letters_std.cend();
-  for (size_t i = letters_std.size() - 1; i > 0; --i) {
-    EXPECT_EQ(*it, *std_it);
-    --it;
-    --std_it;
-  }
-}
-
-TEST(TestIterConst, Cend) {
-  const vector<char> letters = {'g', 'h'};
-  const std::vector<char> letters_std = {'g', 'h'};
-  auto it = letters.cend();
-  auto std_it = letters_std.cend();
-  for (size_t i = letters_std.size() - 1; i > 0; --i) {
-    EXPECT_EQ(*it, *std_it);
-    --it;
-    --std_it;
-  }
-}
 
 TEST(TestIter, Rend) {
   vector<char> letters = {'g', 'h'};
@@ -724,6 +701,16 @@ TEST(TestIterConst, Crend) {
     --it;
     --std_it;
   }
+}
+
+TEST(TestFunc, EmptyFalse) {
+  const vector<char> letters = {'g', 'h'};
+  EXPECT_FALSE(letters.empty());
+}
+
+TEST(TestFunc, EmptyTrue) {
+  const vector<char> letters;
+  EXPECT_TRUE(letters.empty());
 }
 
 int main(int argc, char** argv) {
