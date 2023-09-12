@@ -14,8 +14,8 @@ class vector {
 
   typedef typename alloc_traits::value_type allocator_type;
   typedef typename alloc_traits::size_type size_type;
-  // typedef typename alloc_traits::pointer pointer;
-  // typedef typename alloc_traits::const_pointer const_pointer;
+  typedef typename alloc_traits::pointer iterator;
+  typedef typename alloc_traits::const_pointer const_iterator;
 
   T* v_data;
   size_type v_size;
@@ -190,6 +190,17 @@ class vector {
   };
 
   // --------------------- ITERATORS ---------------------
+  iterator begin() noexcept { return v_data; };
+
+  const_iterator begin() const noexcept { return v_data; };
+
+  const_iterator cbegin() const noexcept { return v_data; };
+
+  iterator end() noexcept { return v_data + v_size; };
+
+  const_iterator end() const noexcept { return v_data + v_size; };
+
+  const_iterator cend() const noexcept { return v_data + v_size; };
 
   // --------------------- MODIFIERS ---------------------
   void resize(size_type count) {
@@ -206,7 +217,7 @@ class vector {
 
   void clear() noexcept { v_size = 0; };
 
-  // iterator insert(const_iterator pos, const T& value);
+  // iterator insert(const_iterator pos, const T& value) {};
 
   // iterator insert(const_iterator pos, T&& value );
 
