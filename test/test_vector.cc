@@ -481,14 +481,51 @@ TEST(TestAccessConst, FrontBack) {
   EXPECT_EQ(v.back(), 0);
 }
 
-TEST(TestConstructorvector, InitializerList) {
+TEST(TestConstructorvectorConst, InitializerList) {
   const vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
 }
 
-TEST(TestAccess, InitListFrontBack) {
+TEST(TestConstructorvectorConst, InitializerListEqual) {
+  const vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
+}
+
+TEST(TestAccessConst, InitListFrontBack) {
   const vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
   EXPECT_EQ(letters.front(), 'a');
   EXPECT_EQ(letters.back(), 'f');
+}
+
+TEST(TestAccessConst, InitListEqualFrontBack) {
+  const vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
+  EXPECT_EQ(letters.front(), 'a');
+  EXPECT_EQ(letters.back(), 'f');
+}
+
+TEST(TestConstructorvector, InitializerList) {
+  vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
+}
+
+TEST(TestConstructorvector, InitializerListEqual) {
+  vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
+}
+
+TEST(TestAccess, InitListFrontBack) {
+  vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
+  EXPECT_EQ(letters.front(), 'a');
+  EXPECT_EQ(letters.back(), 'f');
+}
+
+TEST(TestAccess, InitListEqualFrontBack) {
+  vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
+  EXPECT_EQ(letters.front(), 'a');
+  EXPECT_EQ(letters.back(), 'f');
+}
+
+TEST(TestAccess, InitListEqualFrontBack_2) {
+  vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
+  letters = {'g', 'h'};
+  EXPECT_EQ(letters.front(), 'g');
+  EXPECT_EQ(letters.back(), 'h');
 }
 
 int main(int argc, char** argv) {
