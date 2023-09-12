@@ -27,7 +27,7 @@ class Vector {
 
   // ------- Constructors -------
   Vector() noexcept(noexcept(Allocator()))
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {};
 
   explicit Vector(size_type count, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
@@ -89,7 +89,7 @@ class Vector {
   // ------- Assign -------
   void assign(size_type count, const T& value) { v_construct(count, value); };
 
-  // ------- = -------
+  // ------- Equal = -------
   reference operator=(const Vector& other) {
     if (*this != other) {
       Vector copy(other);
@@ -117,7 +117,7 @@ class Vector {
     return v_data[pos];
   };
 
-  const_reference at(size_type pos) const {  // это
+  const_reference at(size_type pos) const {
     if (pos > v_size || !v_size) {
       throw std::out_of_range(
           "vector::_M_range_check: __n (which is" + std::to_string(pos) +
@@ -217,20 +217,13 @@ class Vector {
 
   void push_back(const T& value) {
     check_reserve();
-    try {
-      new (v_data + v_size) T(value);
-      ++v_size;
-    } catch (...) {
-      v_data[v_size].~T();
-      throw;
-    }
+    push(value);
   };
 
   void push_back(T&& value) {
     check_reserve();
-    // сначала наверное копировать
-    // если что-то пошло не так, то удалить
-    // если все ок то освободить поданое value
+    push(std::move(value));
+    value.~T();
   };
 
   void pop_back() {
@@ -259,6 +252,16 @@ class Vector {
       throw;
     }
     v_size = count;
+  }
+
+  void push(const T& value) {
+    try {
+      new (v_data + v_size) T(value);
+      ++v_size;
+    } catch (...) {
+      v_data[v_size].~T();
+      throw;
+    }
   }
 
   int check_size(size_type size) const {
