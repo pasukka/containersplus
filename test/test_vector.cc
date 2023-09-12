@@ -2,8 +2,6 @@
 
 #include "vector.h"
 
-// TODO: std::vector<char> letters {'a', 'b', 'c', 'd', 'e', 'f'};
-
 TEST(TestConstructorvector, SimpleConstructorInt) {
   vector<int> v;
   EXPECT_EQ(0, v.size());
@@ -481,6 +479,16 @@ TEST(TestAccessConst, FrontBack) {
   const vector<int> v(2);
   EXPECT_EQ(v.front(), 0);
   EXPECT_EQ(v.back(), 0);
+}
+
+TEST(TestConstructorvector, InitializerList) {
+  const vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
+}
+
+TEST(TestAccess, InitListFrontBack) {
+  const vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
+  EXPECT_EQ(letters.front(), 'a');
+  EXPECT_EQ(letters.back(), 'f');
 }
 
 int main(int argc, char** argv) {
