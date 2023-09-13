@@ -3,8 +3,8 @@
 
 #include <cstddef>
 #include <iostream>
-#include <memory>
 #include <iterator>
+#include <memory>
 
 template <class T, class Allocator = std::allocator<T>>
 class vector {
@@ -19,10 +19,12 @@ class vector {
   using const_iterator = const_pointer;
   // using difference_type = std::ptrdiff_t;
 
-  typedef typename alloc_traits::value_type allocator_type; 
+  typedef typename alloc_traits::value_type allocator_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-  typedef typename std::iterator_traits<iterator>::difference_type difference_type; 
+  // typedef typename std::iterator_traits<iterator>::difference_type
+  // difference_type; typedef typename std::iterator_traits<typename
+  // vector<T>::iterator>::difference_type difference_type;
 
   T* v_data;
   size_type v_size;
@@ -35,27 +37,6 @@ class vector {
   // ------- Constructors -------
   vector() noexcept(noexcept(Allocator()))
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
-
-  // template <class InputIt>
-  // vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
-  //     : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-  //   size_type count = static_cast<size_type>(std::distance(first, last));
-  //   check_size(count);
-  //   reserve(count);
-  //   size_t pos = 0;
-  //   try {
-  //     for (InputIt i = first; i < last; ++i) {
-  //       v_alloc.construct(v_data + pos, i);
-  //       ++pos;
-  //     }
-  //   } catch (...) {
-  //     for (size_t i = 0; i < pos; ++i) {
-  //       v_alloc.destroy(v_data + i);
-  //     }
-  //     throw;
-  //   }
-  //   v_size = count;
-  // }
 
   explicit vector(size_type count, const Allocator& alloc = Allocator())
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
@@ -108,6 +89,31 @@ class vector {
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
     *this = init;
   };
+
+  template <class InputIt>
+  vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
+      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+    construct_elements(static_cast<size_type>(first),
+                       static_cast<value_type>(last));
+
+    // size_type count = static_cast<size_type>(std::distance(first, last));
+    // size_type count = last - first;
+    // check_size(count);
+    // reserve(count);
+    // size_t pos = 0;
+    // try {
+    //   for (InputIt i = first; i < last; ++i) {
+    //     v_alloc.construct(v_data + pos, i);
+    //     ++pos;
+    //   }
+    // } catch (...) {
+    //   for (size_t i = 0; i < pos; ++i) {
+    //     v_alloc.destroy(v_data + i);
+    //   }
+    //   throw;
+    // }
+    // v_size = count;
+  }
 
   // ------- Destructors -------
   ~vector() {
