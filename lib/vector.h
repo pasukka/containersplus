@@ -86,7 +86,7 @@ class vector {
     *this = init;
   };
 
-  template <class InputIt>
+  template <class InputIt, typename = std::_RequireInputIter<InputIt>>
   vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
       : vector() {
     v_alloc = alloc;
@@ -360,5 +360,9 @@ class vector {
 
 template <>
 class vector<bool> {};
+
+// template <typename InputIt>
+// vector(InputIt first, InputIt last)
+//     -> vector<typename std::iterator_traits<InputIt>::value_type>;
 
 #endif  // CONTAINERS_LIB_VECTOR_H_
