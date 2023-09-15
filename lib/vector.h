@@ -17,7 +17,7 @@ class vector {
   using const_pointer = const value_type*;
   using iterator = pointer;
   using const_iterator = const_pointer;
-  // using difference_type = std::ptrdiff_t;
+  using difference_type = std::ptrdiff_t;
 
   typedef typename alloc_traits::value_type allocator_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -81,33 +81,31 @@ class vector {
 
   // ------- Initializer list -------
   vector(std::initializer_list<T> init, const Allocator& alloc = Allocator())
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+      : vector() {
+    v_alloc = alloc;
     *this = init;
   };
 
   template <class InputIt>
   vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
-    construct_elements(static_cast<size_type>(first),
-                       static_cast<value_type>(last));
-
-    // size_type count = static_cast<size_type>(std::distance(first, last));
-    // size_type count = last - first;
-    // check_size(count);
-    // reserve(count);
-    // size_t pos = 0;
-    // try {
-    //   for (InputIt i = first; i < last; ++i) {
-    //     v_alloc.construct(v_data + pos, i);
-    //     ++pos;
-    //   }
-    // } catch (...) {
-    //   for (size_t i = 0; i < pos; ++i) {
-    //     v_alloc.destroy(v_data + i);
-    //   }
-    //   throw;
-    // }
-    // v_size = count;
+      : vector() {
+    v_alloc = alloc;
+    size_type count = difference_type(last - first);
+    check_size(count);
+    reserve(count);
+    size_t pos = 0;
+    try {
+      for (InputIt i = first; i < last; ++i) {
+        v_alloc.construct(v_data + pos, i);
+        ++pos;
+      }
+    } catch (...) {
+      for (size_t i = 0; i < pos; ++i) {
+        v_alloc.destroy(v_data + i);
+      }
+      throw;
+    }
+    v_size = count;
   }
 
   // ------- Destructors -------
