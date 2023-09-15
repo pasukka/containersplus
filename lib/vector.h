@@ -39,24 +39,25 @@ class vector {
       : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
 
   explicit vector(size_type count, const Allocator& alloc = Allocator())
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+      : vector() {
+    v_alloc = alloc;
     construct_elements(count);
   };
 
   vector(size_type count, const T& value, const Allocator& alloc = Allocator())
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+      : vector() {
+    v_alloc = alloc;
     construct_elements(count, value);
   };
 
   // ------- Copy -------
-  vector(const vector& other)
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()) {
+  vector(const vector& other) : vector() {
     reserve(other.v_capacity);
     copy_elems(other);
   };
 
-  vector(const vector& other, const Allocator& alloc)
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(alloc) {
+  vector(const vector& other, const Allocator& alloc) : vector() {
+    v_alloc = alloc;
     reserve(other.v_capacity);
     copy_elems(other);
   };
@@ -73,14 +74,8 @@ class vector {
     other.v_alloc = Allocator();
   };
 
-  vector(vector&& other, const Allocator& alloc)
-      : v_data(other.v_data),
-        v_size(other.v_size),
-        v_capacity(other.v_capacity),
-        v_alloc(alloc) {
-    other.v_data = nullptr;
-    other.v_size = 0;
-    other.v_capacity = 0;
+  vector(vector&& other, const Allocator& alloc) : vector(other) {
+    v_alloc = other.v_alloc;
     other.v_alloc = Allocator();
   };
 
