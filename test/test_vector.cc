@@ -713,6 +713,17 @@ TEST(TestFunc, EmptyTrue) {
   EXPECT_TRUE(letters.empty());
 }
 
+TEST(TestIters, Template) {
+  const vector<char> letters = {'g', 'h'};
+  auto first = letters.begin();
+  auto last = letters.end();
+
+  const vector<char> new_letters(first, last);
+  // for (size_t i = letters.size() - 1; i > 0; --i) {
+  //   EXPECT_EQ(letters[i], new_letters[i]);
+  // }
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
