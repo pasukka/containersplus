@@ -261,7 +261,22 @@ class vector {
 
   void clear() noexcept { v_size = 0; };
 
-  // iterator insert(const_iterator pos, const T& value) {};
+  iterator insert(const_iterator pos, const T& value) {
+    size_t start_vector = ;
+    size_t end_vector = ;
+    size_type pos = 0;
+    pointer new_v_data = v_alloc.allocate(end_vector - start_vector);
+    size_t i = 0;
+    for (; i < pos; ++i) {
+      new_v_data[i] = v_data[i];
+    }
+    new_v_data[i] = value;
+    for (; i < end_vector; ++i) {
+      new_v_data[i] = v_data[i];
+    }    
+    ++v_size;
+    return v_data + pos;
+  };
 
   // iterator insert(const_iterator pos, T&& value );
 
