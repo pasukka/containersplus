@@ -714,14 +714,14 @@ TEST(TestFunc, EmptyTrue) {
 }
 
 TEST(TestIters, Template) {
-  const vector<char> letters = {'g', 'h'};
+  const vector<char> letters = {'g', 'h', 'l', 'k'};
   auto first = letters.begin();
   auto last = letters.end();
 
   const vector<char> new_letters(first, last);
-  // for (size_t i = letters.size() - 1; i > 0; --i) {
-  //   EXPECT_EQ(letters[i], new_letters[i]);
-  // }
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
 }
 
 int main(int argc, char** argv) {
