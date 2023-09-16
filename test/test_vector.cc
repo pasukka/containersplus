@@ -187,7 +187,7 @@ TEST(TestConstructorvectorConst, ConstructorWithParamIntAndValue) {
 }
 
 TEST(TestConstructorvector, ConstructorWithParamValueAndValue) {
-  char n = 'a';
+  char n = 2;
   char m = 'b';
   try {
     vector<int> v(n, m);
@@ -201,7 +201,7 @@ TEST(TestConstructorvector, ConstructorWithParamValueAndValue) {
 }
 
 TEST(TestConstructorvectorConst, ConstructorWithParamValueAndValue) {
-  char n = 'a';
+  char n = 2;
   char m = 'b';
   try {
     const vector<int> v(n, m);
