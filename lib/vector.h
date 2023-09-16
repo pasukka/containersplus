@@ -86,23 +86,26 @@ class vector {
     *this = init;
   };
 
-  template <class InputIt, typename = std::_RequireInputIter<InputIt>>
+  template <typename InputIt>
+  using RequireInputIterator = typename std::enable_if<std::is_convertible<
+      typename std::iterator_traits<InputIt>::iterator_category,
+      std::input_iterator_tag>::value>::type;
+
+  template <class InputIt, typename = RequireInputIterator<InputIt>>
   vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
       : vector() {
     v_alloc = alloc;
     size_type count = difference_type(last - first);
     check_size(count);
     reserve(count);
-    size_t pos = 0;
+    size_type pos = 0;
     try {
-      for (InputIt i = first; i < last; ++i) {
-        v_alloc.construct(v_data + pos, i);
-        ++pos;
+      for (; pos < count; ++pos) {
+        v_alloc.construct(v_data + pos, *first);
+        ++first;
       }
     } catch (...) {
-      for (size_t i = 0; i < pos; ++i) {
-        v_alloc.destroy(v_data + i);
-      }
+      destroy_elements(pos);
       throw;
     }
     v_size = count;
@@ -303,6 +306,12 @@ class vector {
   };
 
  private:
+  void destroy_elements(size_type count, size_type start = 0) {
+    for (size_t i = start; i < count; ++i) {
+      v_alloc.destroy(v_data + i);
+    }
+  };
+
   void construct_elements(size_type count, const T& val = 0,
                           size_type start = 0) {
     check_size(count);
@@ -312,9 +321,7 @@ class vector {
         v_alloc.construct(v_data + i, val);
       }
     } catch (...) {
-      for (size_t i = start; i < count; ++i) {
-        v_alloc.destroy(v_data + i);
-      }
+      destroy_elements(count, start);
       throw;
     }
     v_size = count;
