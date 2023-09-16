@@ -713,7 +713,7 @@ TEST(TestFunc, EmptyTrue) {
   EXPECT_TRUE(letters.empty());
 }
 
-TEST(TestIters, Template) {
+TEST(TestIters, ConstructConst) {
   const vector<char> letters = {'g', 'h', 'l', 'k'};
   auto first = letters.begin();
   auto last = letters.end();
@@ -723,6 +723,35 @@ TEST(TestIters, Template) {
     EXPECT_EQ(letters[i], new_letters[i]);
   }
 }
+
+TEST(TestIters, Construct) {
+  vector<char> letters = {'g', 'h', 'l', 'k'};
+  auto first = letters.begin();
+  auto last = letters.end();
+
+  vector<char> new_letters(first, last);
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
+TEST(TestIters, Insert) {
+  std::vector<char> letters = {'g', 'h', 'o', 'l', 'k', 'i'};
+  vector<char> new_letters = {'g', 'h', 'l', 'k'};
+
+  char to_insert_1 = 'o';
+  char to_insert_2 = 'i';
+  auto first = letters.begin();
+  auto last = letters.end();
+  letters.insert(first + 2, to_insert_1);
+  letters.insert(last - 1, to_insert_2);
+
+  EXPECT_EQ(letters.size(), new_letters.size());
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
