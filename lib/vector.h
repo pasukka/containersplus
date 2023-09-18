@@ -262,9 +262,9 @@ class vector {
   void clear() noexcept { v_size = 0; };
 
   iterator insert(const_iterator pos, const T& value) {
-    size_t start_vector = ;
-    size_t end_vector = ;
-    size_type pos = 0;
+    printf("\n size: %ld", v_size);
+    size_t start_vector = static_cast<size_type>(std::distance(cbegin(), pos));
+    size_t end_vector = static_cast<size_type>(std::distance(pos, cend()));
     pointer new_v_data = v_alloc.allocate(end_vector - start_vector);
     size_t i = 0;
     for (; i < pos; ++i) {
@@ -273,8 +273,12 @@ class vector {
     new_v_data[i] = value;
     for (; i < end_vector; ++i) {
       new_v_data[i] = v_data[i];
-    }    
+    }
     ++v_size;
+    printf("\n new size: %ld", v_size);
+    // for (size_t i = 0; i < v_size; ++i) {
+    //   printf("\n %c", v_data[i]);
+    // }
     return v_data + pos;
   };
 
