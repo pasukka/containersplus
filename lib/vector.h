@@ -264,7 +264,13 @@ class vector {
     return v_data;  // + pos
   };
 
-  // iterator insert(const_iterator pos, size_type count, const T& value)
+  iterator insert(const_iterator pos, size_type count, const T& value) {
+    if (max_size() < count) {
+      throw std::length_error("vector::_M_fill_insert");
+    }
+    to_insert(pos, value, count);
+    return v_data;  // + pos
+  };
 
   // template< class InputIt >
   // iterator insert(const_iterator pos, InputIt first, InputIt last);
@@ -343,7 +349,7 @@ class vector {
 
   int check_size(size_type size) const {
     if (max_size() < size) {
-      throw std::invalid_argument("std::vector larger than max_size()");
+      throw std::length_error("std::vector larger than max_size()");
     }
     return true;
   }
@@ -374,21 +380,25 @@ class vector {
     v_data = new_v_data;
   }
 
-  void to_insert(const_iterator pos, const T& value) {
+  void to_insert(const_iterator pos, const T& value, size_t count = 1) {
     size_t start_vector = static_cast<size_type>(std::distance(cbegin(), pos));
     size_t end_vector = static_cast<size_type>(std::distance(pos, cend()));
     size_t all_size = start_vector + end_vector;
-    pointer new_v_data = v_alloc.allocate(all_size + 1);
+    pointer new_v_data = v_alloc.allocate(all_size + count);
     size_t i = 0;
     for (; i < start_vector; ++i) {
       new_v_data[i] = v_data[i];
     }
-    new_v_data[i] = value;
+    for (size_t j = 0; j < count; ++j) {
+      new_v_data[i] = value;
+      ++i;
+    }
+    i -= count;
     for (; i < all_size; ++i) {
-      new_v_data[i + 1] = v_data[i];
+      new_v_data[i + count] = v_data[i];
     }
     swap_data(new_v_data);
-    ++v_size;
+    v_size += count;
     v_capacity = all_size;
   }
 };
