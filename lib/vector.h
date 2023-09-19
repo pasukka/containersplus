@@ -289,7 +289,22 @@ class vector {
     return v_data;
   }
 
-  // iterator insert(const_iterator pos, std::initializer_list<T> ilist);
+  iterator insert(const_iterator pos, std::initializer_list<T> ilist) {
+    size_type count = ilist.size();
+    size_type start_vector = pos - cbegin();
+    size_type all_size = start_vector + (cend() - pos);
+    pointer new_v_data = v_alloc.allocate(all_size + count);
+    size_type i = 0;
+    make_start(new_v_data, &i, start_vector);
+    for (auto element : ilist) {
+      new_v_data[i] = element;
+      ++i;
+    }
+    make_end(new_v_data, &i, count, all_size);
+    swap_data(new_v_data, all_size);
+    v_size += count;
+    return v_data;
+  };
 
   // template< class... Args >
   // iterator emplace( const_iterator pos, Args&&... args );
