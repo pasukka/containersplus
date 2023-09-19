@@ -8,6 +8,7 @@
 
 template <class T, class Allocator = std::allocator<T>>
 class vector {
+ public:
   using value_type = T;
   using size_type = std::size_t;
   using alloc_traits = std::allocator_traits<Allocator>;
@@ -26,12 +27,6 @@ class vector {
   // difference_type; typedef typename std::iterator_traits<typename
   // vector<T>::iterator>::difference_type difference_type;
 
-  T* v_data;
-  size_type v_size;
-  size_type v_capacity;
-  Allocator v_alloc;
-
- public:
   // --------------------- MEMBER FUNCTION ---------------------
 
   // ------- Constructors -------
@@ -201,9 +196,7 @@ class vector {
         v_alloc.deallocate(new_v_data, n);
         throw;
       }
-      destroy_data(0, v_size);
-      v_alloc.deallocate(v_data, v_capacity);
-      v_data = new_v_data;
+      swap_data(new_v_data);
       v_capacity = n;
     }
   };
@@ -262,24 +255,22 @@ class vector {
   void clear() noexcept { v_size = 0; };
 
   iterator insert(const_iterator pos, const T& value) {
-    printf("\n size: %ld", v_size);
     size_t start_vector = static_cast<size_type>(std::distance(cbegin(), pos));
     size_t end_vector = static_cast<size_type>(std::distance(pos, cend()));
-    pointer new_v_data = v_alloc.allocate(end_vector - start_vector);
+    size_t all_size = start_vector + end_vector + 1;
+    pointer new_v_data = v_alloc.allocate(all_size);
     size_t i = 0;
-    for (; i < pos; ++i) {
+    for (; i < start_vector; ++i) {
       new_v_data[i] = v_data[i];
     }
     new_v_data[i] = value;
-    for (; i < end_vector; ++i) {
-      new_v_data[i] = v_data[i];
+    for (; i < all_size - 1; ++i) {
+      new_v_data[i + 1] = v_data[i];
     }
+    swap_data(new_v_data);
     ++v_size;
-    printf("\n new size: %ld", v_size);
-    // for (size_t i = 0; i < v_size; ++i) {
-    //   printf("\n %c", v_data[i]);
-    // }
-    return v_data + pos;
+    v_capacity = all_size;
+    return v_data;  // + pos
   };
 
   // iterator insert(const_iterator pos, T&& value );
@@ -325,6 +316,11 @@ class vector {
   };
 
  private:
+  T* v_data;
+  size_type v_size;
+  size_type v_capacity;
+  Allocator v_alloc;
+
   void destroy_elements(size_type count, size_type start = 0) {
     for (size_t i = start; i < count; ++i) {
       v_alloc.destroy(v_data + i);
@@ -381,6 +377,12 @@ class vector {
       v_alloc.destroy(v_data + i);
       --v_capacity;
     }
+  }
+
+  void swap_data(pointer new_v_data) {
+    destroy_data(0, v_size);
+    v_alloc.deallocate(v_data, v_capacity);
+    v_data = new_v_data;
   }
 };
 
