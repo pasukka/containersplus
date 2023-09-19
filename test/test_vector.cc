@@ -741,11 +741,11 @@ TEST(TestIters, Insert) {
 
   std::vector<char> letters = {'g', 'h', 'l', 'k'};
   auto first_std = letters.begin();
-  letters.insert(first_std + 2, to_insert_1);
+  auto res = letters.insert(first_std + 2, to_insert_1);
 
   vector<char> new_letters = {'g', 'h', 'l', 'k'};
   auto first = new_letters.begin();
-  new_letters.insert(first + 2, to_insert_1);
+  auto my_res = new_letters.insert(first + 2, to_insert_1);
 
   auto last_std = letters.end();
   letters.insert(last_std - 1, to_insert_2);
@@ -754,6 +754,8 @@ TEST(TestIters, Insert) {
   new_letters.insert(last - 1, to_insert_2);
 
   EXPECT_EQ(letters.size(), new_letters.size());
+  // EXPECT_EQ(*res, *my_res); //TODO
+
   for (size_t i = 0; i < new_letters.size(); ++i) {
     EXPECT_EQ(letters[i], new_letters[i]);
   }
@@ -842,28 +844,30 @@ TEST(TestIters, InsertList) {
 
   std::vector<char> letters = {'g', 'h', 'l', 'k'};
   auto pos_std = letters.begin() + 3;
-  letters.insert(pos_std, list);
+  auto res = letters.insert(pos_std, list);
 
   vector<char> new_letters = {'g', 'h', 'l', 'k'};
   auto pos = new_letters.begin() + 3;
-  new_letters.insert(pos, list);
+  auto my_res = new_letters.insert(pos, list);
 
   EXPECT_EQ(letters.size(), new_letters.size());
+  EXPECT_EQ(*res, *my_res);
   for (size_t i = 0; i < new_letters.size(); ++i) {
     EXPECT_EQ(letters[i], new_letters[i]);
   }
 }
 
 TEST(TestIters, Erase) {
-  std::vector<char> letters = {'g', 'h', 'l', 'k'};
+  std::vector<char> letters = {'g', 'h', 'l', 'k', 'f', 'u', 'i'};
   auto pos_std = letters.begin() + 1;
-  letters.erase(pos_std);
+  auto res = letters.erase(pos_std);
 
-  vector<char> new_letters = {'g', 'h', 'l', 'k'};
+  vector<char> new_letters = {'g', 'h', 'l', 'k', 'f', 'u', 'i'};
   auto pos = new_letters.begin() + 1;
-  new_letters.erase(pos);
+  auto my_res = new_letters.erase(pos);
 
   EXPECT_EQ(letters.size(), new_letters.size());
+  EXPECT_EQ(*res, *my_res);
   for (size_t i = 0; i < new_letters.size(); ++i) {
     EXPECT_EQ(letters[i], new_letters[i]);
   }
@@ -873,14 +877,15 @@ TEST(TestIters, EraseIter) {
   std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
   auto fisrt_std = letters.begin() + 2;
   auto last_std = letters.begin() + 4;
-  letters.erase(fisrt_std, last_std);
+  auto res = letters.erase(fisrt_std, last_std);
 
   vector<char> new_letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
   auto fisrt = new_letters.begin() + 2;
   auto last = new_letters.begin() + 4;
-  new_letters.erase(fisrt, last);
+  auto my_res = new_letters.erase(fisrt, last);
 
   EXPECT_EQ(letters.size(), new_letters.size());
+  EXPECT_EQ(*res, *my_res);
   for (size_t i = 0; i < new_letters.size(); ++i) {
     EXPECT_EQ(letters[i], new_letters[i]);
   }
