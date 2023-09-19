@@ -783,6 +783,42 @@ TEST(TestIters, InsertMove) {
   }
 }
 
+TEST(TestIters, InsertCount) {
+  char to_insert_1 = 'o';
+  char to_insert_2 = 'i';
+
+  std::vector<char> letters = {'g', 'h', 'l', 'k'};
+  auto first_std = letters.begin();
+  letters.insert(first_std + 2, 2, to_insert_1);
+
+  vector<char> new_letters = {'g', 'h', 'l', 'k'};
+  auto first = new_letters.begin();
+  new_letters.insert(first + 2, 2, to_insert_1);
+
+  auto last_std = letters.end();
+  letters.insert(last_std - 1, 6, to_insert_2);
+
+  auto last = new_letters.end();
+  new_letters.insert(last - 1, 6, to_insert_2);  // -1
+
+  EXPECT_EQ(letters.size(), new_letters.size());
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
+TEST(TestIters, InsertCountNeg) {
+  try {
+    char to_insert = 'o';
+    vector<char> new_letters = {'g', 'h', 'l', 'k'};
+    auto first = new_letters.begin();
+    new_letters.insert(first + 2, -2, to_insert);
+    FAIL();
+  } catch (std::length_error& ex) {
+    SUCCEED();
+  }
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
