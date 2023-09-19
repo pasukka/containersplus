@@ -255,25 +255,14 @@ class vector {
   void clear() noexcept { v_size = 0; };
 
   iterator insert(const_iterator pos, const T& value) {
-    size_t start_vector = static_cast<size_type>(std::distance(cbegin(), pos));
-    size_t end_vector = static_cast<size_type>(std::distance(pos, cend()));
-    size_t all_size = start_vector + end_vector + 1;
-    pointer new_v_data = v_alloc.allocate(all_size);
-    size_t i = 0;
-    for (; i < start_vector; ++i) {
-      new_v_data[i] = v_data[i];
-    }
-    new_v_data[i] = value;
-    for (; i < all_size - 1; ++i) {
-      new_v_data[i + 1] = v_data[i];
-    }
-    swap_data(new_v_data);
-    ++v_size;
-    v_capacity = all_size;
+    to_insert(pos, value);
     return v_data;  // + pos
   };
 
-  // iterator insert(const_iterator pos, T&& value );
+  iterator insert(const_iterator pos, T&& value) {
+    to_insert(pos, std::move(value));
+    return v_data;  // + pos
+  };
 
   // iterator insert(const_iterator pos, size_type count, const T& value)
 
@@ -383,6 +372,24 @@ class vector {
     destroy_data(0, v_size);
     v_alloc.deallocate(v_data, v_capacity);
     v_data = new_v_data;
+  }
+
+  void to_insert(const_iterator pos, const T& value) {
+    size_t start_vector = static_cast<size_type>(std::distance(cbegin(), pos));
+    size_t end_vector = static_cast<size_type>(std::distance(pos, cend()));
+    size_t all_size = start_vector + end_vector;
+    pointer new_v_data = v_alloc.allocate(all_size + 1);
+    size_t i = 0;
+    for (; i < start_vector; ++i) {
+      new_v_data[i] = v_data[i];
+    }
+    new_v_data[i] = value;
+    for (; i < all_size; ++i) {
+      new_v_data[i + 1] = v_data[i];
+    }
+    swap_data(new_v_data);
+    ++v_size;
+    v_capacity = all_size;
   }
 };
 
