@@ -289,9 +289,26 @@ class vector {
   // template< class... Args >
   // iterator emplace( const_iterator pos, Args&&... args );
 
-  // iterator erase(const_iterator pos);
+  iterator erase(const_iterator pos) {
+    size_type end_of_vector = cend() - pos;
+    size_type start = pos - cbegin();
+    for (size_type j = 0; j < end_of_vector - 1; ++j, ++start) {
+      v_data[start] = v_data[start + 1];
+    }
+    v_size -= 1;
+    return v_data;  // + pos
+  };
 
-  // iterator erase( const_iterator first, const_iterator last );
+  iterator erase(const_iterator first, const_iterator last) {
+    size_type count = last - first;
+    size_type start = first - cbegin();
+    for (size_type j = start; j < v_size - count; ++j) {
+      v_data[j] = *(first + count);
+      ++first;
+    }
+    v_size -= count;
+    return v_data;  // + pos
+  };
 
   // template< class... Args >
   // reference emplace_back( Args&&... args );
@@ -418,6 +435,32 @@ class vector {
     }
   }
 };
+
+/*
+template< class T, class Alloc >
+bool operator==( const std::vector<T, Alloc>& lhs,
+                 const std::vector<T, Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator!=( const std::vector<T, Alloc>& lhs,
+                 const std::vector<T, Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator<( const std::vector<T, Alloc>& lhs,
+                const std::vector<T, Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator<=( const std::vector<T, Alloc>& lhs,
+                 const std::vector<T, Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator>( const std::vector<T, Alloc>& lhs,
+                const std::vector<T, Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator>=( const std::vector<T, Alloc>& lhs,
+                 const std::vector<T, Alloc>& rhs );
+*/
 
 template <>
 class vector<bool> {};
