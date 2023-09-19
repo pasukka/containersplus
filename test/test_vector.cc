@@ -819,6 +819,24 @@ TEST(TestIters, InsertCountNeg) {
   }
 }
 
+TEST(TestIters, InsertIter) {
+  std::vector<char> list_1 = {'i', 'l', 'o', 'v', 'e', 'i', 't'};
+  vector<char> list_2 = {'i', 'l', 'o', 'v', 'e', 'i', 't'};
+
+  std::vector<char> letters = {'g', 'h', 'l', 'k'};
+  auto pos_std = letters.begin() + 1;
+  letters.insert(pos_std, list_1.begin() + 1, list_1.begin() + 5);
+
+  vector<char> new_letters = {'g', 'h', 'l', 'k'};
+  auto pos = new_letters.begin() + 1;
+  new_letters.insert(pos, list_2.begin() + 1, list_2.begin() + 5);
+
+  EXPECT_EQ(letters.size(), new_letters.size());
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
