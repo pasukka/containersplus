@@ -23,10 +23,7 @@ class vector {
   typedef typename alloc_traits::value_type allocator_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-  // typedef typename std::iterator_traits<iterator>::difference_type
-  // difference_type; typedef typename std::iterator_traits<typename
-  // vector<T>::iterator>::difference_type difference_type;
-
+  
   // --------------------- MEMBER FUNCTION ---------------------
 
   // ------- Constructors -------
@@ -442,9 +439,5 @@ class vector {
 
 template <>
 class vector<bool> {};
-
-// template <typename InputIt>
-// vector(InputIt first, InputIt last)
-//     -> vector<typename std::iterator_traits<InputIt>::value_type>;
 
 #endif  // CONTAINERS_LIB_VECTOR_H_
