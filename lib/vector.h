@@ -246,21 +246,18 @@ class vector {
   };
 
   iterator insert(const_iterator pos, const T& value) {
-    to_insert(pos, value);
-    return v_data;  // + pos
+    return to_insert(pos, value);
   };
 
   iterator insert(const_iterator pos, T&& value) {
-    to_insert(pos, std::move(value));
-    return v_data;  // + pos
+    return to_insert(pos, std::move(value));
   };
 
   iterator insert(const_iterator pos, size_type count, const T& value) {
     if (max_size() < count + v_size || max_size() < count) {
       throw std::length_error("vector::_M_fill_insert");
     }
-    to_insert(pos, value, count);
-    return v_data;  // + pos
+    return to_insert(pos, value, count);
   };
 
   template <class InputIt>
@@ -278,12 +275,11 @@ class vector {
     make_end(new_v_data, &i, count, all_size);
     swap_data(new_v_data, all_size);
     v_size += count;
-    return v_data;
+    return v_data + start_vector;
   }
 
   iterator insert(const_iterator pos, std::initializer_list<T> ilist) {
-    insert(pos, ilist.begin(), ilist.end());
-    return v_data;
+    return insert(pos, ilist.begin(), ilist.end());
   };
 
   // template< class... Args >
@@ -296,7 +292,8 @@ class vector {
       v_data[start] = v_data[start + 1];
     }
     v_size -= 1;
-    return v_data;  // + pos
+    start = pos - cbegin();
+    return v_data + start;
   };
 
   iterator erase(const_iterator first, const_iterator last) {
@@ -307,7 +304,7 @@ class vector {
       ++first;
     }
     v_size -= count;
-    return v_data;  // + pos
+    return v_data + start;
   };
 
   // template< class... Args >
@@ -407,7 +404,7 @@ class vector {
     v_capacity = n;
   }
 
-  void to_insert(const_iterator pos, const T& value, size_type count = 1) {
+  iterator to_insert(const_iterator pos, const T& value, size_type count = 1) {
     size_type start_vector = pos - cbegin();
     size_type all_size = start_vector + (cend() - pos);
     pointer new_v_data = v_alloc.allocate(all_size + count);
@@ -419,6 +416,8 @@ class vector {
     make_end(new_v_data, &i, count, all_size);
     swap_data(new_v_data, all_size);
     v_size += count;
+    size_type start = pos - cbegin();
+    return v_data + start;
   }
 
   void make_start(pointer new_v_data, size_type* pos, size_type start_vector) {
