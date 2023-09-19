@@ -736,26 +736,28 @@ TEST(TestIters, Construct) {
 }
 
 TEST(TestIters, Insert) {
-  std::vector<char> letters = {'g', 'h', 'l', 'k'};
-  vector<char> new_letters = {'g', 'h', 'l', 'k'};
-
   char to_insert_1 = 'o';
   char to_insert_2 = 'i';
-  auto first = letters.begin();
-  auto last = letters.end();
+
+  std::vector<char> letters = {'g', 'h', 'l', 'k'};
+  auto first_std = letters.begin();
+  letters.insert(first_std + 2, to_insert_1);
+
+  vector<char> new_letters = {'g', 'h', 'l', 'k'};
+  auto first = new_letters.begin();
   new_letters.insert(first + 2, to_insert_1);
-  letters.insert(first + 2, to_insert_1);
 
+  auto last_std = letters.end();
+  letters.insert(last_std - 1, to_insert_2);
+
+  auto last = new_letters.end();
   new_letters.insert(last - 1, to_insert_2);
-  letters.insert(last - 1, to_insert_2);
 
-  // // EXPECT_EQ(letters.size(), new_letters.size());
-  // for (size_t i = 0; i < new_letters.size(); ++i) {
-  //   printf("\n %c", new_letters[i]);
-  //   // EXPECT_EQ(letters[i], new_letters[i]);
-  // }
+  EXPECT_EQ(letters.size(), new_letters.size());
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
 }
-
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
