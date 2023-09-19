@@ -837,6 +837,23 @@ TEST(TestIters, InsertIter) {
   }
 }
 
+TEST(TestIters, InsertList) {
+  std::initializer_list<char> list = {'i', 'l', 'o', 'v', 'e', 'i', 't'};
+
+  std::vector<char> letters = {'g', 'h', 'l', 'k'};
+  auto pos_std = letters.begin() + 3;
+  letters.insert(pos_std, list);
+
+  vector<char> new_letters = {'g', 'h', 'l', 'k'};
+  auto pos = new_letters.begin() + 3;
+  new_letters.insert(pos, list);
+
+  EXPECT_EQ(letters.size(), new_letters.size());
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
