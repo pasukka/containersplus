@@ -23,7 +23,7 @@ class vector {
   typedef typename alloc_traits::value_type allocator_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-  
+
   // --------------------- MEMBER FUNCTION ---------------------
 
   // ------- Constructors -------
@@ -204,18 +204,15 @@ class vector {
 
   // --------------------- ITERATORS ---------------------
   iterator begin() noexcept { return v_data; };
-
   const_iterator begin() const noexcept { return v_data; };
-
   const_iterator cbegin() const noexcept { return v_data; };
 
   iterator end() noexcept { return v_data + v_size; };
-
   const_iterator end() const noexcept { return v_data + v_size; };
-
   const_iterator cend() const noexcept { return v_data + v_size; };
 
   reverse_iterator rbegin() noexcept { return reverse_iterator(end()); };
+  reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
 
   const_reverse_iterator rbegin() const noexcept {
     return const_reverse_iterator(end());
@@ -224,8 +221,6 @@ class vector {
   const_reverse_iterator crbegin() const noexcept {
     return const_reverse_iterator(cend());
   };
-
-  reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
 
   const_reverse_iterator rend() const noexcept {
     return const_reverse_iterator(begin());
@@ -236,6 +231,8 @@ class vector {
   };
 
   // --------------------- MODIFIERS ---------------------
+  void clear() noexcept { v_size = 0; };
+
   void resize(size_type count) {
     if (count != v_size) {
       construct_elements(count, 0, v_size);
@@ -247,8 +244,6 @@ class vector {
       construct_elements(count, value, v_size);
     }
   };
-
-  void clear() noexcept { v_size = 0; };
 
   iterator insert(const_iterator pos, const T& value) {
     to_insert(pos, value);
@@ -276,7 +271,7 @@ class vector {
     pointer new_v_data = v_alloc.allocate(all_size + count);
     size_type i = 0;
     make_start(new_v_data, &i, start_vector);
-    for (; i <= count; ++i) {
+    for (size_type j = 0; j < count; ++j, ++i) {
       new_v_data[i] = *first;
       ++first;
     }
@@ -287,19 +282,7 @@ class vector {
   }
 
   iterator insert(const_iterator pos, std::initializer_list<T> ilist) {
-    size_type count = ilist.size();
-    size_type start_vector = pos - cbegin();
-    size_type all_size = start_vector + (cend() - pos);
-    pointer new_v_data = v_alloc.allocate(all_size + count);
-    size_type i = 0;
-    make_start(new_v_data, &i, start_vector);
-    for (auto element : ilist) {
-      new_v_data[i] = element;
-      ++i;
-    }
-    make_end(new_v_data, &i, count, all_size);
-    swap_data(new_v_data, all_size);
-    v_size += count;
+    insert(pos, ilist.begin(), ilist.end());
     return v_data;
   };
 
@@ -413,9 +396,8 @@ class vector {
     pointer new_v_data = v_alloc.allocate(all_size + count);
     size_type i = 0;
     make_start(new_v_data, &i, start_vector);
-    for (size_type j = 0; j < count; ++j) {
+    for (size_type j = 0; j < count; ++j, ++i) {
       new_v_data[i] = value;
-      ++i;
     }
     make_end(new_v_data, &i, count, all_size);
     swap_data(new_v_data, all_size);
