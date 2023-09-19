@@ -196,8 +196,7 @@ class vector {
         v_alloc.deallocate(new_v_data, n);
         throw;
       }
-      swap_data(new_v_data);
-      v_capacity = n;
+      swap_data(new_v_data, n);
     }
   };
 
@@ -265,15 +264,30 @@ class vector {
   };
 
   iterator insert(const_iterator pos, size_type count, const T& value) {
-    if (max_size() < count) {
+    if (max_size() < count + v_size || max_size() < count) {
       throw std::length_error("vector::_M_fill_insert");
     }
     to_insert(pos, value, count);
     return v_data;  // + pos
   };
 
-  // template< class InputIt >
-  // iterator insert(const_iterator pos, InputIt first, InputIt last);
+  template <class InputIt>
+  iterator insert(const_iterator pos, InputIt first, InputIt last) {
+    size_type count = difference_type(last - first);
+    size_type start_vector = pos - cbegin();
+    size_type all_size = start_vector + (cend() - pos);
+    pointer new_v_data = v_alloc.allocate(all_size + count);
+    size_type i = 0;
+    make_start(new_v_data, &i, start_vector);
+    for (; i <= count; ++i) {
+      new_v_data[i] = *first;
+      ++first;
+    }
+    make_end(new_v_data, &i, count, all_size);
+    swap_data(new_v_data, all_size);
+    v_size += count;
+    return v_data;
+  }
 
   // iterator insert(const_iterator pos, std::initializer_list<T> ilist);
 
@@ -317,7 +331,7 @@ class vector {
   Allocator v_alloc;
 
   void destroy_elements(size_type count, size_type start = 0) {
-    for (size_t i = start; i < count; ++i) {
+    for (size_type i = start; i < count; ++i) {
       v_alloc.destroy(v_data + i);
     }
   };
@@ -327,7 +341,7 @@ class vector {
     check_size(count);
     reserve(count);
     try {
-      for (size_t i = start; i < count; ++i) {
+      for (size_type i = start; i < count; ++i) {
         v_alloc.construct(v_data + i, val);
       }
     } catch (...) {
@@ -374,32 +388,40 @@ class vector {
     }
   }
 
-  void swap_data(pointer new_v_data) {
+  void swap_data(pointer new_v_data, size_type n) {
     destroy_data(0, v_size);
     v_alloc.deallocate(v_data, v_capacity);
     v_data = new_v_data;
+    v_capacity = n;
   }
 
-  void to_insert(const_iterator pos, const T& value, size_t count = 1) {
-    size_t start_vector = static_cast<size_type>(std::distance(cbegin(), pos));
-    size_t end_vector = static_cast<size_type>(std::distance(pos, cend()));
-    size_t all_size = start_vector + end_vector;
+  void to_insert(const_iterator pos, const T& value, size_type count = 1) {
+    size_type start_vector = pos - cbegin();
+    size_type all_size = start_vector + (cend() - pos);
     pointer new_v_data = v_alloc.allocate(all_size + count);
-    size_t i = 0;
-    for (; i < start_vector; ++i) {
-      new_v_data[i] = v_data[i];
-    }
-    for (size_t j = 0; j < count; ++j) {
+    size_type i = 0;
+    make_start(new_v_data, &i, start_vector);
+    for (size_type j = 0; j < count; ++j) {
       new_v_data[i] = value;
       ++i;
     }
-    i -= count;
-    for (; i < all_size; ++i) {
-      new_v_data[i + count] = v_data[i];
-    }
-    swap_data(new_v_data);
+    make_end(new_v_data, &i, count, all_size);
+    swap_data(new_v_data, all_size);
     v_size += count;
-    v_capacity = all_size;
+  }
+
+  void make_start(pointer new_v_data, size_type* pos, size_type start_vector) {
+    for (; *pos < start_vector; ++*pos) {
+      new_v_data[*pos] = v_data[*pos];
+    }
+  }
+
+  void make_end(pointer new_v_data, size_type* pos, size_type count,
+                size_type all_size) {
+    *pos -= count;
+    for (; *pos < all_size; ++(*pos)) {
+      new_v_data[*pos + count] = v_data[*pos];
+    }
   }
 };
 
