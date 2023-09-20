@@ -416,8 +416,7 @@ class vector {
     make_end(new_v_data, &i, count, all_size);
     swap_data(new_v_data, all_size);
     v_size += count;
-    size_type start = pos - cbegin();
-    return v_data + start;
+    return v_data + start_vector;
   }
 
   void make_start(pointer new_v_data, size_type* pos, size_type start_vector) {
