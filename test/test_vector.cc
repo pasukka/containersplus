@@ -904,6 +904,42 @@ TEST(TestCompare, NotEqual) {
   EXPECT_NE(v1, v2);
 }
 
+TEST(TestCompare, NotEqual2) {
+  vector<char> v1 = {'g', 'h', 'l'};
+  vector<char> v2 = {'g', 'h', 'l', 'l'};
+  EXPECT_NE(v1, v2);
+}
+
+TEST(TestCompare, Smaller) {
+  vector<char> v1 = {'g', 'h', 'l', 'k'};
+  vector<char> v2 = {'g', 'h', 'l', 'l'};
+  EXPECT_TRUE(v1 < v2);
+}
+
+TEST(TestCompare, Smaller2) {
+  vector<char> v1 = {'g', 'h', 'l'};
+  vector<char> v2 = {'g', 'h', 'l', 'l'};
+  EXPECT_TRUE(v1 < v2);
+}
+
+TEST(TestCompare, Bigger) {
+  vector<char> v1 = {'g', 'h', 'l', 'k'};
+  vector<char> v2 = {'g', 'h', 'l', 'l'};
+  EXPECT_TRUE(v2 > v1);
+}
+
+TEST(TestCompare, BiggerOrEqual) {
+  vector<char> v1 = {'g', 'h', 'l', 'k'};
+  vector<char> v2 = {'g', 'h', 'l', 'k'};
+  EXPECT_TRUE(v2 >= v1);
+}
+
+TEST(TestCompare, SmallerOrEqual) {
+  vector<char> v1 = {'g', 'h', 'l', 'k'};
+  vector<char> v2 = {'g', 'h', 'l', 'k'};
+  EXPECT_TRUE(v2 <= v1);
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
