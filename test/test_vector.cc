@@ -755,6 +755,7 @@ TEST(TestIters, Insert) {
 
   EXPECT_EQ(letters.size(), new_letters.size());
   EXPECT_EQ(*res, *my_res);
+  EXPECT_EQ(to_insert_2, 'i');
 
   for (size_t i = 0; i < new_letters.size(); ++i) {
     EXPECT_EQ(letters[i], new_letters[i]);
