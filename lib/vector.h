@@ -282,9 +282,6 @@ class vector {
     return insert(pos, ilist.begin(), ilist.end());
   };
 
-  // template< class... Args >
-  // iterator emplace( const_iterator pos, Args&&... args );
-
   iterator erase(const_iterator pos) {
     size_type end_of_vector = cend() - pos;
     size_type start = pos - cbegin();
@@ -306,6 +303,9 @@ class vector {
     v_size -= count;
     return v_data + start;
   };
+
+  // template< class... Args >  //  std::allocator_traits::construct
+  // iterator emplace( const_iterator pos, Args&&... args );
 
   // template< class... Args >
   // reference emplace_back( Args&&... args );
