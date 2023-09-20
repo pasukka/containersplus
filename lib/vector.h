@@ -437,8 +437,7 @@ class vector {
 template <class T, class Alloc>
 bool operator==(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   bool output = true;
-  if (lhs.size() !=
-      rhs.size()) {  // || lhs.get_allocator() != rhs.get_allocator()) {
+  if (lhs.size() != rhs.size()) {
     output = false;
   } else {
     for (size_t i = 0; i < lhs.size(); ++i) {
@@ -455,23 +454,35 @@ bool operator!=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return !(lhs == rhs);
 };
 
-/*
-template< class T, class Alloc >
-bool operator<( const std::vector<T, Alloc>& lhs,
-                const std::vector<T, Alloc>& rhs );  // lexicographically less
+template <class T, class Alloc>
+bool operator<(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  bool output = false;
+  if (lhs.size() < rhs.size()) {
+    output = true;
+  } else {
+    for (size_t i = 0; i < lhs.size(); ++i) {
+      if (lhs[i] < rhs[i]) {
+        output = true;
+      }
+    }
+  }
+  return output;
+};
 
-template< class T, class Alloc >
-bool operator<=( const std::vector<T, Alloc>& lhs,
-                 const std::vector<T, Alloc>& rhs );
+template <class T, class Alloc>
+bool operator<=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return !(lhs > rhs);
+};
 
-template< class T, class Alloc >
-bool operator>( const std::vector<T, Alloc>& lhs,
-                const std::vector<T, Alloc>& rhs );
+template <class T, class Alloc>
+bool operator>(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return !(lhs < rhs || lhs == rhs);
+};
 
-template< class T, class Alloc >
-bool operator>=( const std::vector<T, Alloc>& lhs,
-                 const std::vector<T, Alloc>& rhs );
-*/
+template <class T, class Alloc>
+bool operator>=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return !(lhs < rhs);
+};
 
 template <>
 class vector<bool> {};
