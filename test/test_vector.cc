@@ -892,6 +892,18 @@ TEST(TestIters, EraseIter) {
   }
 }
 
+TEST(TestCompare, Equal) {
+  vector<char> v1 = {'g', 'h', 'l', 'k'};
+  vector<char> v2 = {'g', 'h', 'l', 'k'};
+  EXPECT_EQ(v1, v2);
+}
+
+TEST(TestCompare, NotEqual) {
+  vector<char> v1 = {'g', 'h', 'l', 'k'};
+  vector<char> v2 = {'g', 'h', 'l', 'l'};
+  EXPECT_NE(v1, v2);
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
