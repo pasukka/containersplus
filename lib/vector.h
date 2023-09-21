@@ -186,7 +186,7 @@ class vector {
 
   void reserve(size_type n = 1) {
     if (n > v_capacity) {
-      T* new_v_data = v_alloc.allocate(n);
+      pointer new_v_data = v_alloc.allocate(n);
       try {
         std::uninitialized_copy(v_data, v_data + v_size, new_v_data);
       } catch (...) {
