@@ -973,21 +973,6 @@ TEST(TestFunc, EmplaceBack) {
   }
 }
 
-// TEST(TestFunc, EmplaceString) {
-//   std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
-//   auto value = "hey";
-//   auto res = letters.emplace_back(value);
-
-//   vector<char> new_letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
-//   auto my_res = new_letters.emplace_back(value);
-
-//   EXPECT_EQ(letters.size(), new_letters.size());
-//   EXPECT_EQ(res, my_res);
-//   for (size_t i = 0; i < new_letters.size(); ++i) {
-//     EXPECT_EQ(letters[i], new_letters[i]);
-//   }
-// }
-
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
