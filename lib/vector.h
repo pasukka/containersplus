@@ -309,11 +309,18 @@ class vector {
     return v_data + start;
   };
 
-  // template< class... Args >  //  std::allocator_traits::construct
-  // iterator emplace( const_iterator pos, Args&&... args );
+  template <class... Args>
+  iterator emplace(const_iterator pos, Args&&... args) {
+    return insert(pos, std::move(std::forward<Args>(args)...));
+  }
 
-  // template< class... Args >
-  // reference emplace_back( Args&&... args );
+  template <class... Args>
+  reference emplace_back(Args&&... args) {
+    auto old_size = v_size;
+    push_back(std::move(std::forward<Args>(args)...));
+    reference answ = v_data[old_size];
+    return answ;
+  }
 
   void push_back(const T& value) {
     check_reserve();
