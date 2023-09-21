@@ -941,6 +941,53 @@ TEST(TestCompare, SmallerOrEqual) {
   EXPECT_TRUE(v2 <= v1);
 }
 
+TEST(TestFunc, EmplaceValue) {
+  std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
+  auto pos_std = letters.begin() + 2;
+  char value = 'u';
+  auto res = letters.emplace(pos_std, value);
+
+  vector<char> new_letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
+  auto pos = new_letters.begin() + 2;
+  auto my_res = new_letters.emplace(pos, value);
+
+  EXPECT_EQ(letters.size(), new_letters.size());
+  EXPECT_EQ(*res, *my_res);
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
+TEST(TestFunc, EmplaceBack) {
+  std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
+  char value = 'u';
+  auto res = letters.emplace_back(value);
+
+  vector<char> new_letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
+  auto my_res = new_letters.emplace_back(value);
+
+  EXPECT_EQ(letters.size(), new_letters.size());
+  EXPECT_EQ(res, my_res);
+  for (size_t i = 0; i < new_letters.size(); ++i) {
+    EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
+// TEST(TestFunc, EmplaceString) {
+//   std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
+//   auto value = "hey";
+//   auto res = letters.emplace_back(value);
+
+//   vector<char> new_letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
+//   auto my_res = new_letters.emplace_back(value);
+
+//   EXPECT_EQ(letters.size(), new_letters.size());
+//   EXPECT_EQ(res, my_res);
+//   for (size_t i = 0; i < new_letters.size(); ++i) {
+//     EXPECT_EQ(letters[i], new_letters[i]);
+//   }
+// }
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
