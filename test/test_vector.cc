@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <iostream>
+#include <string>
 #include <vector>
 
 #include "vector.h"
@@ -970,6 +972,25 @@ TEST(TestFunc, EmplaceBack) {
   EXPECT_EQ(res, my_res);
   for (size_t i = 0; i < new_letters.size(); ++i) {
     EXPECT_EQ(letters[i], new_letters[i]);
+  }
+}
+
+TEST(TestFunc, EmplaceString) {
+  std::vector<std::string> vtr = {"donkey",        "goat",   "cat",   "pig",
+                                  "dog",           "Cow",    "Sheep", "horse",
+                                  "water buffalo", "red fox"};
+  auto value = "panda";
+  auto res = vtr.emplace_back(value);
+
+  vector<std::string> new_vtr = {"donkey",        "goat",   "cat",   "pig",
+                                 "dog",           "Cow",    "Sheep", "horse",
+                                 "water buffalo", "red fox"};
+  auto my_res = new_vtr.emplace_back(value);
+
+  EXPECT_EQ(vtr.size(), new_vtr.size());
+  EXPECT_EQ(res, my_res);
+  for (size_t i = 0; i < vtr.size(); ++i) {
+    EXPECT_EQ(vtr[i], new_vtr[i]);
   }
 }
 
