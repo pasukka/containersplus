@@ -318,8 +318,8 @@ class vector {
   reference emplace_back(Args&&... args) {
     auto old_size = v_size;
     push_back(std::move(std::forward<Args>(args)...));
-    reference answ = v_data[old_size];
-    return answ;
+    reference element = v_data[old_size];
+    return element;
   }
 
   void push_back(const T& value) {
