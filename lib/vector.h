@@ -291,7 +291,7 @@ class vector {
     size_type end_of_vector = cend() - pos;
     size_type start = pos - cbegin();
     for (size_type j = 0; j < end_of_vector - 1; ++j, ++start) {
-      v_data[start] = v_data[start + 1];
+      create_new_element(v_data, start, start + 1, v_data[start + 1]);
     }
     v_size -= 1;
     start = pos - cbegin();
@@ -302,7 +302,7 @@ class vector {
     size_type count = last - first;
     size_type start = first - cbegin();
     for (size_type j = start; j < v_size - count; ++j) {
-      v_data[j] = *(first + count);
+      create_new_element(v_data, j, j + 1, *(first + count));
       ++first;
     }
     v_size -= count;
