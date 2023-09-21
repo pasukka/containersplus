@@ -267,12 +267,17 @@ class vector {
     size_type all_size = start_vector + (cend() - pos);
     pointer new_v_data = v_alloc.allocate(all_size + count);
     size_type i = 0;
-    make_start(new_v_data, &i, start_vector);
+    for (; i < start_vector; ++i) {
+      create_new_element(new_v_data, i, i + 1, v_data[i]);
+    }
     for (size_type j = 0; j < count; ++j, ++i) {
-      new_v_data[i] = *first;
+      create_new_element(new_v_data, i, i + 1, *first);
       ++first;
     }
-    make_end(new_v_data, &i, count, all_size);
+    i -= count;
+    for (; i < all_size; ++i) {
+      create_new_element(new_v_data, i + count, i + count + 1, v_data[i]);
+    }
     swap_data(new_v_data, all_size);
     v_size += count;
     return v_data + start_vector;
@@ -349,15 +354,20 @@ class vector {
                           size_type start = 0) {
     check_size(count);
     reserve(count);
+    create_new_element(v_data, start, count, val);
+    v_size = count;
+  }
+
+  void create_new_element(pointer data, size_type start, size_type count,
+                          const T& value) {
     try {
       for (size_type i = start; i < count; ++i) {
-        v_alloc.construct(v_data + i, val);
+        v_alloc.construct(data + i, value);
       }
     } catch (...) {
       destroy_elements(count, start);
       throw;
     }
-    v_size = count;
   }
 
   void push(const T& value) {
@@ -409,28 +419,19 @@ class vector {
     size_type all_size = start_vector + (cend() - pos);
     pointer new_v_data = v_alloc.allocate(all_size + count);
     size_type i = 0;
-    make_start(new_v_data, &i, start_vector);
-    for (size_type j = 0; j < count; ++j, ++i) {
-      new_v_data[i] = value;
+    for (; i < start_vector; ++i) {
+      create_new_element(new_v_data, i, i + 1, v_data[i]);
     }
-    make_end(new_v_data, &i, count, all_size);
+    for (size_type j = 0; j < count; ++j, ++i) {
+      create_new_element(new_v_data, i, i + 1, value);
+    }
+    i -= count;
+    for (; i < all_size; ++i) {
+      create_new_element(new_v_data, i + count, i + count + 1, v_data[i]);
+    }
     swap_data(new_v_data, all_size);
     v_size += count;
     return v_data + start_vector;
-  }
-
-  void make_start(pointer new_v_data, size_type* pos, size_type start_vector) {
-    for (; *pos < start_vector; ++*pos) {
-      new_v_data[*pos] = v_data[*pos];
-    }
-  }
-
-  void make_end(pointer new_v_data, size_type* pos, size_type count,
-                size_type all_size) {
-    *pos -= count;
-    for (; *pos < all_size; ++(*pos)) {
-      new_v_data[*pos + count] = v_data[*pos];
-    }
   }
 };
 
