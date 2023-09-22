@@ -188,6 +188,16 @@ TEST(TestConstructorvectorConst, At_4) {
   }
 }
 
+TEST(TestMemory, ReserveError) {
+  vector<char> v = {1, 2, 3};
+  try {
+    v.reserve(10000000000);
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
+
 TEST(TestConstructorvector, ConstructorWithParamIntAndValue) {
   int n = 2;
   int m = 5;
