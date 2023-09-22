@@ -79,6 +79,35 @@ TEST(TestConstructorvector, ConstructorWithParamInt) {
   }
 }
 
+TEST(TestConstructorvector, ConstructorAllocCopy) {
+  vector<int> other = {1, 2, 3};
+  std::allocator<int> alloc;
+  try {
+    vector<int> v(other, alloc);
+    EXPECT_EQ(other.size(), v.size());
+    EXPECT_EQ(other.capacity(), v.capacity());
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(TestConstructorvector, ConstructorWithAllocMove) {
+  vector<int> other = {1, 2, 3};
+  size_t size = other.size();
+  size_t capacity = other.capacity();
+  std::allocator<int> alloc;
+  try {
+    vector<int> v(std::move(other), alloc);
+    EXPECT_EQ(size, v.size());
+    EXPECT_EQ(capacity, v.capacity());
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+
 TEST(TestConstructorvectorConst, ConstructorWithParamInt) {
   int n = 2;
   try {
