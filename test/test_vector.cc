@@ -107,7 +107,6 @@ TEST(TestConstructorvector, ConstructorWithAllocMove) {
   }
 }
 
-
 TEST(TestConstructorvectorConst, ConstructorWithParamInt) {
   int n = 2;
   try {

@@ -140,7 +140,7 @@ class vector {
     return *this;
   };
 
-  allocator_type get_allocator() const noexcept { return v_alloc; };
+  // allocator_type get_allocator() const noexcept { return v_alloc; };
 
   // --------------------- ELEMENT ACCESS ---------------------
   reference at(size_type pos) {
