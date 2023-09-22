@@ -67,7 +67,7 @@ class vector {
   };
 
   vector(vector&& other, const Allocator& alloc) : vector(other) {
-    v_alloc = other.v_alloc;
+    v_alloc = alloc;
     other.v_alloc = Allocator();
   };
 
