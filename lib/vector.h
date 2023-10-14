@@ -96,7 +96,7 @@ class vector {
         v_alloc.construct(v_data + pos, *first);
         ++first;
       }
-    } catch (...) {
+    } catch (...) {  // TODO
       destroy_elements(pos);
       throw;
     }
@@ -140,7 +140,7 @@ class vector {
     return *this;
   };
 
-  // allocator_type get_allocator() const noexcept { return v_alloc; };
+  // allocator_type get_allocator() const noexcept { return v_alloc; };  // TODO
 
   // --------------------- ELEMENT ACCESS ---------------------
   reference at(size_type pos) {
@@ -372,7 +372,7 @@ class vector {
       for (size_type i = start; i < count; ++i) {
         v_alloc.construct(data + i, value);
       }
-    } catch (...) {
+    } catch (...) {  // TODO
       destroy_elements(count, start);
       throw;
     }
@@ -381,7 +381,7 @@ class vector {
   void push(const T& value) {
     try {
       v_alloc.construct(v_data + v_size, value);
-    } catch (...) {
+    } catch (...) {  // TODO
       v_alloc.destroy(v_data + v_size);
       throw;
     }
