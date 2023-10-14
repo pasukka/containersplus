@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <stdint> 
 
 template <class T, class Allocator = std::allocator<T>>
 class vector {
@@ -492,8 +493,5 @@ template <class T, class Alloc>
 bool operator>=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return !(lhs < rhs);
 };
-
-template <>
-class vector<bool> {};
 
 #endif  // CONTAINERS_LIB_VECTOR_H_
