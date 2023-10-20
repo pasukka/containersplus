@@ -191,7 +191,7 @@ TEST(TestConstructorvectorConst, At_4) {
 TEST(TestMemory, ReserveError) {
   vector<char> v = {1, 2, 3};
   try {
-    v.reserve(10000000000);
+    v.reserve(100000000000);
     FAIL();
   } catch (...) {
     SUCCEED();
@@ -1029,6 +1029,17 @@ TEST(TestFunc, EmplaceString) {
   EXPECT_EQ(res, my_res);
   for (size_t i = 0; i < vtr.size(); ++i) {
     EXPECT_EQ(vtr[i], new_vtr[i]);
+  }
+}
+
+TEST(TestAlloc, GetAlloc) {
+  vector<int> other = {1, 2, 3};
+  auto alloc = other.get_allocator();
+  try {
+    vector<int> v(2, alloc);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
   }
 }
 
