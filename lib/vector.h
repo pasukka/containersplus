@@ -31,53 +31,53 @@ class vector {
 
   // ------- Constructors -------
   vector() noexcept(noexcept(Allocator()))
-      : v_data(nullptr), v_size(0), v_capacity(0), v_alloc(Allocator()){};
+      : data_(nullptr), size_(0), capacity_(0), alloc_(Allocator()){};
 
   explicit vector(size_type count, const Allocator& alloc = Allocator())
       : vector() {
-    v_alloc = alloc;
+    alloc_ = alloc;
     construct_elements(count);
   };
 
   vector(size_type count, const T& value, const Allocator& alloc = Allocator())
       : vector() {
-    v_alloc = alloc;
+    alloc_ = alloc;
     construct_elements(count, value);
   };
 
   // ------- Copy -------
   vector(const vector& other) : vector() {
-    reserve(other.v_capacity);
+    reserve(other.capacity_);
     copy_elems(other);
   };
 
   vector(const vector& other, const Allocator& alloc) : vector() {
-    v_alloc = alloc;
-    reserve(other.v_capacity);
+    alloc_ = alloc;
+    reserve(other.capacity_);
     copy_elems(other);
   };
 
   // ------- Move -------
   vector(vector&& other) noexcept
-      : v_data(other.v_data),
-        v_size(other.v_size),
-        v_capacity(other.v_capacity),
-        v_alloc(other.v_alloc) {
-    other.v_data = nullptr;
-    other.v_size = 0;
-    other.v_capacity = 0;
-    other.v_alloc = Allocator();
+      : data_(other.data_),
+        size_(other.size_),
+        capacity_(other.capacity_),
+        alloc_(other.alloc_) {
+    other.data_ = nullptr;
+    other.size_ = 0;
+    other.capacity_ = 0;
+    other.alloc_ = Allocator();
   };
 
   vector(vector&& other, const Allocator& alloc) : vector(other) {
-    v_alloc = alloc;
-    other.v_alloc = Allocator();
+    alloc_ = alloc;
+    other.alloc_ = Allocator();
   };
 
   // ------- Initializer list -------
   vector(std::initializer_list<T> init, const Allocator& alloc = Allocator())
       : vector() {
-    v_alloc = alloc;
+    alloc_ = alloc;
     *this = init;
   };
 
@@ -89,27 +89,27 @@ class vector {
   template <class InputIt, typename = RequireInputIterator<InputIt>>
   vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
       : vector() {
-    v_alloc = alloc;
+    alloc_ = alloc;
     size_type count = difference_type(last - first);
     check_size(count);
     reserve(count);
     size_type pos = 0;
     try {
       for (; pos < count; ++pos) {
-        v_alloc.construct(v_data + pos, *first);
+        alloc_.construct(data_ + pos, *first);
         ++first;
       }
     } catch (...) {
       destroy_elements(pos);
       throw;
     }
-    v_size = count;
+    size_ = count;
   }
 
   // ------- Destructors -------
   ~vector() {
-    if (v_data != nullptr) {
-      v_alloc.deallocate(v_data, v_capacity);
+    if (data_ != nullptr) {
+      alloc_.deallocate(data_, capacity_);
     }
   };
 
@@ -139,81 +139,81 @@ class vector {
       construct_elements(pos + 1, element, pos);
       ++pos;
     }
-    v_size = ilist.size();
+    size_ = ilist.size();
     return *this;
   };
 
-  allocator_type get_allocator() const noexcept { return v_alloc; };
+  allocator_type get_allocator() const noexcept { return alloc_; };
 
   // --------------------- ELEMENT ACCESS ---------------------
   reference at(size_type pos) {
-    if (pos > v_size || !v_size) {
+    if (pos > size_ || !size_) {
       throw std::out_of_range(
           "vector::_M_range_check: __n (which is" + std::to_string(pos) +
           ">= this->size() (which is " + std::to_string(pos) + ")");
     }
-    return v_data[pos];
+    return data_[pos];
   };
 
   const_reference at(size_type pos) const {
-    if (pos > v_size || !v_size) {
+    if (pos > size_ || !size_) {
       throw std::out_of_range(
           "vector::_M_range_check: __n (which is" + std::to_string(pos) +
           ">= this->size() (which is " + std::to_string(pos) + ")");
     }
-    return v_data[pos];
+    return data_[pos];
   };
 
-  reference operator[](size_type i) { return v_data[i]; };
-  const reference operator[](size_type i) const { return v_data[i]; };
+  reference operator[](size_type i) { return data_[i]; };
+  const reference operator[](size_type i) const { return data_[i]; };
 
-  reference front() { return v_data[0]; };
-  const_reference front() const { return v_data[0]; };
+  reference front() { return data_[0]; };
+  const_reference front() const { return data_[0]; };
 
-  reference back() { return v_data[v_size - 1]; };
-  const_reference back() const { return v_data[v_size - 1]; };
+  reference back() { return data_[size_ - 1]; };
+  const_reference back() const { return data_[size_ - 1]; };
 
-  T* data() noexcept { return v_data; };
-  const T* data() const noexcept { return v_data; };
+  T* data() noexcept { return data_; };
+  const T* data() const noexcept { return data_; };
 
   // --------------------- CAPACITY ---------------------
   bool empty() const noexcept { return (begin() == end()); };
 
-  size_type size() const noexcept { return v_size; };
+  size_type size() const noexcept { return size_; };
 
   size_type max_size() const noexcept {
-    return alloc_traits::max_size(v_alloc);
+    return alloc_traits::max_size(alloc_);
   };
 
-  size_type capacity() const noexcept { return v_capacity; };
+  size_type capacity() const noexcept { return capacity_; };
 
   void reserve(size_type n = 1) {
-    if (n > v_capacity) {
-      pointer new_v_data = nullptr;
+    if (n > capacity_) {
+      pointer new_data_ = nullptr;
       try {
-        new_v_data = v_alloc.allocate(n);
-        std::uninitialized_copy(v_data, v_data + v_size, new_v_data);
+        new_data_ = alloc_.allocate(n);
+        std::uninitialized_copy(data_, data_ + size_, new_data_);
       } catch (...) {
-        v_alloc.deallocate(new_v_data, n);
+        alloc_.deallocate(new_data_, n);
         throw;
       }
-      swap_data(new_v_data, n);
+      swap_data(new_data_, n);
     }
   };
 
   void shrink_to_fit() {
-    size_type old_cap = v_capacity;
-    destroy_data(v_size, old_cap);
+    size_type old_cap = capacity_;
+    destroy_data(size_, old_cap);
   };
 
   // --------------------- ITERATORS ---------------------
-  iterator begin() noexcept { return v_data; };
-  const_iterator begin() const noexcept { return v_data; };
-  const_iterator cbegin() const noexcept { return v_data; };
+  iterator begin() noexcept { return data_; };
+  const_iterator begin() const noexcept { return data_; };
+  const_iterator cbegin() const noexcept { return data_; };
 
-  iterator end() noexcept { return v_data + v_size; };
-  const_iterator end() const noexcept { return v_data + v_size; };
-  const_iterator cend() const noexcept { return v_data + v_size; };
+  iterator end() noexcept { return data_ + size_; };
+  const_iterator end() const noexcept { return data_ + size_; };
+  const_iterator cend() const noexcept { return data_ + size_; };
 
   reverse_iterator rbegin() noexcept { return reverse_iterator(end()); };
   reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
@@ -235,17 +235,17 @@ class vector {
   };
 
   // --------------------- MODIFIERS ---------------------
-  void clear() noexcept { v_size = 0; };
+  void clear() noexcept { size_ = 0; };
 
   void resize(size_type count) {
-    if (count != v_size) {
-      construct_elements(count, 0, v_size);
+    if (count != size_) {
+      construct_elements(count, 0, size_);
     }
   };
 
   void resize(size_type count, const value_type& value) {
-    if (count != v_size) {
-      construct_elements(count, value, v_size);
+    if (count != size_) {
+      construct_elements(count, value, size_);
     }
   };
 
@@ -258,7 +258,7 @@ class vector {
   };
 
   iterator insert(const_iterator pos, size_type count, const T& value) {
-    if (max_size() < count + v_size || max_size() < count) {
+    if (max_size() < count + size_ || max_size() < count) {
       throw std::length_error("vector::_M_fill_insert");
     }
     return to_insert(pos, value, count);
@@ -269,22 +269,22 @@ class vector {
     size_type count = difference_type(last - first);
     size_type start_vector = pos - cbegin();
     size_type all_size = start_vector + (cend() - pos);
-    pointer new_v_data = v_alloc.allocate(all_size + count);
+    pointer new_data_ = alloc_.allocate(all_size + count);
     size_type i = 0;
     for (; i < start_vector; ++i) {
-      create_new_element(new_v_data, i, i + 1, v_data[i]);
+      create_new_element(new_data_, i, i + 1, data_[i]);
     }
     for (size_type j = 0; j < count; ++j, ++i) {
-      create_new_element(new_v_data, i, i + 1, *first);
+      create_new_element(new_data_, i, i + 1, *first);
       ++first;
     }
     i -= count;
     for (; i < all_size; ++i) {
-      create_new_element(new_v_data, i + count, i + count + 1, v_data[i]);
+      create_new_element(new_data_, i + count, i + count + 1, data_[i]);
     }
-    swap_data(new_v_data, all_size);
-    v_size += count;
-    return v_data + start_vector;
+    swap_data(new_data_, all_size);
+    size_ += count;
+    return data_ + start_vector;
   }
 
   iterator insert(const_iterator pos, std::initializer_list<T> ilist) {
@@ -295,22 +295,22 @@ class vector {
     size_type end_of_vector = cend() - pos;
     size_type start = pos - cbegin();
     for (size_type j = 0; j < end_of_vector - 1; ++j, ++start) {
-      create_new_element(v_data, start, start + 1, v_data[start + 1]);
+      create_new_element(data_, start, start + 1, data_[start + 1]);
     }
-    v_size -= 1;
+    size_ -= 1;
     start = pos - cbegin();
-    return v_data + start;
+    return data_ + start;
   };
 
   iterator erase(const_iterator first, const_iterator last) {
     size_type count = last - first;
     size_type start = first - cbegin();
-    for (size_type j = start; j < v_size - count; ++j) {
-      create_new_element(v_data, j, j + 1, *(first + count));
+    for (size_type j = start; j < size_ - count; ++j) {
+      create_new_element(data_, j, j + 1, *(first + count));
       ++first;
     }
-    v_size -= count;
-    return v_data + start;
+    size_ -= count;
+    return data_ + start;
   };
 
   template <class... Args>
@@ -320,9 +320,9 @@ class vector {
 
   template <class... Args>
   reference emplace_back(Args&&... args) {
-    auto old_size = v_size;
+    auto old_size = size_;
     push_back(std::move(std::forward<Args>(args)...));
-    reference element = v_data[old_size];
+    reference element = data_[old_size];
     return element;
   }
 
@@ -338,26 +338,26 @@ class vector {
   };
 
   void pop_back() {
-    --v_size;
-    v_data[v_size].~T();
+    --size_;
+    data_[size_].~T();
   };
 
   void swap(vector& other) noexcept {
-    std::swap(v_data, other.v_data);
-    std::swap(v_size, other.v_size);
-    std::swap(v_capacity, other.v_capacity);
-    std::swap(v_alloc, other.v_alloc);
+    std::swap(data_, other.data_);
+    std::swap(size_, other.size_);
+    std::swap(capacity_, other.capacity_);
+    std::swap(alloc_, other.alloc_);
   };
 
  private:
-  T* v_data;
-  size_type v_size;
-  size_type v_capacity;
-  Allocator v_alloc;
+  T* data_;
+  size_type size_;
+  size_type capacity_;
+  Allocator alloc_;
 
   void destroy_elements(size_type count, size_type start = 0) {
     for (size_type i = start; i < count; ++i) {
-      v_alloc.destroy(v_data + i);
+      alloc_.destroy(data_ + i);
     }
   };
 
@@ -365,15 +365,15 @@ class vector {
                           size_type start = 0) {
     check_size(count);
     reserve(count);
-    create_new_element(v_data, start, count, val);
-    v_size = count;
+    create_new_element(data_, start, count, val);
+    size_ = count;
   }
 
   void create_new_element(pointer data, size_type start, size_type count,
                           const T& value) {
     try {
       for (size_type i = start; i < count; ++i) {
-        v_alloc.construct(data + i, value);
+        alloc_.construct(data + i, value);
       }
     } catch (...) {
       destroy_elements(count, start);
@@ -383,12 +383,12 @@ class vector {
 
   void push(const T& value) {
     try {
-      v_alloc.construct(v_data + v_size, value);
+      alloc_.construct(data_ + size_, value);
     } catch (...) {
-      v_alloc.destroy(v_data + v_size);
+      alloc_.destroy(data_ + size_);
       throw;
     }
-    ++v_size;
+    ++size_;
   }
 
   int check_size(size_type size) const {
@@ -399,50 +399,50 @@ class vector {
   }
 
   void check_reserve() {
-    if ((v_capacity == v_size)) {
-      reserve(2 * v_size + 1);
+    if ((capacity_ == size_)) {
+      reserve(2 * size_ + 1);
     }
   }
 
   void copy_elems(const vector& other) {
-    for (size_type i = 0; i < other.v_size; ++i) {
-      v_data[i] = other.v_data[i];
+    for (size_type i = 0; i < other.size_; ++i) {
+      data_[i] = other.data_[i];
     }
-    v_size = other.v_size;
+    size_ = other.size_;
   }
 
   void destroy_data(size_type start, size_type end) {
     for (size_type i = start; i < end; ++i) {
-      v_alloc.destroy(v_data + i);
-      --v_capacity;
+      alloc_.destroy(data_ + i);
+      --capacity_;
     }
   }
 
-  void swap_data(pointer new_v_data, size_type n) {
-    destroy_data(0, v_size);
-    v_alloc.deallocate(v_data, v_capacity);
-    v_data = new_v_data;
-    v_capacity = n;
+  void swap_data(pointer new_data_, size_type n) {
+    destroy_data(0, size_);
+    alloc_.deallocate(data_, capacity_);
+    data_ = new_data_;
+    capacity_ = n;
   }
 
   iterator to_insert(const_iterator pos, const T& value, size_type count = 1) {
     size_type start_vector = pos - cbegin();
     size_type all_size = start_vector + (cend() - pos);
-    pointer new_v_data = v_alloc.allocate(all_size + count);
+    pointer new_data_ = alloc_.allocate(all_size + count);
     size_type i = 0;
     for (; i < start_vector; ++i) {
-      create_new_element(new_v_data, i, i + 1, v_data[i]);
+      create_new_element(new_data_, i, i + 1, data_[i]);
     }
     for (size_type j = 0; j < count; ++j, ++i) {
-      create_new_element(new_v_data, i, i + 1, value);
+      create_new_element(new_data_, i, i + 1, value);
     }
     i -= count;
     for (; i < all_size; ++i) {
-      create_new_element(new_v_data, i + count, i + count + 1, v_data[i]);
+      create_new_element(new_data_, i + count, i + count + 1, data_[i]);
     }
-    swap_data(new_v_data, all_size);
-    v_size += count;
-    return v_data + start_vector;
+    swap_data(new_data_, all_size);
+    size_ += count;
+    return data_ + start_vector;
   }
 };
 
