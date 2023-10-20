@@ -6,31 +6,31 @@
 
 #include "vector.h"
 
-TEST(TestConstructorvector, SimpleConstructorInt) {
+TEST(VectorTestConstructor, SimpleConstructorInt) {
   vector<int> v;
   EXPECT_EQ(0, v.size());
   EXPECT_EQ(0, v.capacity());
 }
 
-TEST(TestConstructorvectorConst, SimpleConstructorInt) {
+TEST(VectorTestConstructorConst, SimpleConstructorInt) {
   const vector<int> v;
   EXPECT_EQ(0, v.size());
   EXPECT_EQ(0, v.capacity());
 }
 
-TEST(TestConstructorvector, SimpleConstructorChar) {
+TEST(VectorTestConstructor, SimpleConstructorChar) {
   vector<char> v;
   EXPECT_EQ(0, v.size());
   EXPECT_EQ(0, v.capacity());
 }
 
-TEST(TestConstructorvectorConst, SimpleConstructorChar) {
+TEST(VectorVectorTestConstructor, SimpleConstructorChar) {
   const vector<char> v;
   EXPECT_EQ(0, v.size());
   EXPECT_EQ(0, v.capacity());
 }
 
-TEST(TestConstructorvector, SimpleConstructorIntEx) {
+TEST(VectorTestConstructor, SimpleConstructorIntEx) {
   try {
     vector<int> v(-2);
     FAIL();
@@ -39,7 +39,7 @@ TEST(TestConstructorvector, SimpleConstructorIntEx) {
   }
 }
 
-TEST(TestConstructorvectorConst, SimpleConstructorIntEx) {
+TEST(VectorTestConstructorConst, SimpleConstructorIntEx) {
   try {
     const vector<int> v(-2);
     FAIL();
@@ -48,7 +48,7 @@ TEST(TestConstructorvectorConst, SimpleConstructorIntEx) {
   }
 }
 
-TEST(TestConstructorvector, SimpleConstructorCharEx) {
+TEST(VectorTestConstructor, SimpleConstructorCharEx) {
   try {
     vector<char> v(-2);
     FAIL();
@@ -57,7 +57,7 @@ TEST(TestConstructorvector, SimpleConstructorCharEx) {
   }
 }
 
-TEST(TestConstructorvectorConst, SimpleConstructorCharEx) {
+TEST(VectorTestConstructorConst, SimpleConstructorCharEx) {
   try {
     const vector<char> v(-2);
     FAIL();
@@ -66,7 +66,7 @@ TEST(TestConstructorvectorConst, SimpleConstructorCharEx) {
   }
 }
 
-TEST(TestConstructorvector, ConstructorWithParamInt) {
+TEST(VectorTestConstructor, ConstructorWithParamInt) {
   int n = 2;
   try {
     vector<int> v(n);
@@ -79,7 +79,7 @@ TEST(TestConstructorvector, ConstructorWithParamInt) {
   }
 }
 
-TEST(TestConstructorvector, ConstructorAllocCopy) {
+TEST(VectorTestConstructor, ConstructorAllocCopy) {
   vector<int> other = {1, 2, 3};
   std::allocator<int> alloc;
   try {
@@ -92,7 +92,7 @@ TEST(TestConstructorvector, ConstructorAllocCopy) {
   }
 }
 
-TEST(TestConstructorvector, ConstructorWithAllocMove) {
+TEST(VectorTestConstructor, ConstructorWithAllocMove) {
   vector<int> other = {1, 2, 3};
   size_t size = other.size();
   size_t capacity = other.capacity();
@@ -107,7 +107,7 @@ TEST(TestConstructorvector, ConstructorWithAllocMove) {
   }
 }
 
-TEST(TestConstructorvectorConst, ConstructorWithParamInt) {
+TEST(VectorTestConstructorConst, ConstructorWithParamInt) {
   int n = 2;
   try {
     const vector<int> v(n);
@@ -121,7 +121,7 @@ TEST(TestConstructorvectorConst, ConstructorWithParamInt) {
   }
 }
 
-TEST(TestConstructorvector, ConstructorWithParamChar) {
+TEST(VectorTestConstructor, ConstructorWithParamChar) {
   int n = 2;
   try {
     vector<char> v(n);
@@ -134,7 +134,7 @@ TEST(TestConstructorvector, ConstructorWithParamChar) {
   }
 }
 
-TEST(TestConstructorvectorConst, ConstructorWithParamChar) {
+TEST(VectorTestConstructorConst, ConstructorWithParamChar) {
   int n = 2;
   try {
     const vector<char> v(n);
@@ -148,7 +148,7 @@ TEST(TestConstructorvectorConst, ConstructorWithParamChar) {
   }
 }
 
-TEST(TestConstructorvectorConst, At_1) {
+TEST(VectorTestConstructorConst, At_1) {
   const vector<int> v(2);
   try {
     EXPECT_EQ(0, v.at(10));
@@ -158,7 +158,7 @@ TEST(TestConstructorvectorConst, At_1) {
   }
 }
 
-TEST(TestConstructorvectorConst, At_2) {
+TEST(VectorTestConstructorConst, At_2) {
   const vector<int> v(2);
   try {
     EXPECT_EQ(0, v.at(-1));
@@ -168,7 +168,7 @@ TEST(TestConstructorvectorConst, At_2) {
   }
 }
 
-TEST(TestConstructorvectorConst, At_3) {
+TEST(VectorTestConstructorConst, At_3) {
   const vector<char> v(2);
   try {
     EXPECT_EQ(0, v.at(10));
@@ -178,7 +178,7 @@ TEST(TestConstructorvectorConst, At_3) {
   }
 }
 
-TEST(TestConstructorvectorConst, At_4) {
+TEST(VectorTestConstructorConst, At_4) {
   const vector<char> v(2);
   try {
     EXPECT_EQ(0, v.at(-1));
@@ -188,7 +188,7 @@ TEST(TestConstructorvectorConst, At_4) {
   }
 }
 
-TEST(TestMemory, ReserveError) {
+TEST(VectorTestMemory, ReserveError) {
   vector<char> v = {1, 2, 3};
   try {
     v.reserve(100000000000);
@@ -198,7 +198,7 @@ TEST(TestMemory, ReserveError) {
   }
 }
 
-TEST(TestConstructorvector, ConstructorWithParamIntAndValue) {
+TEST(VectorTestConstructor, ConstructorWithParamIntAndValue) {
   int n = 2;
   int m = 5;
   try {
@@ -212,7 +212,7 @@ TEST(TestConstructorvector, ConstructorWithParamIntAndValue) {
   }
 }
 
-TEST(TestConstructorvectorConst, ConstructorWithParamIntAndValue) {
+TEST(VectorTestConstructorConst, ConstructorWithParamIntAndValue) {
   int n = 2;
   int m = 5;
   try {
@@ -226,7 +226,7 @@ TEST(TestConstructorvectorConst, ConstructorWithParamIntAndValue) {
   }
 }
 
-TEST(TestConstructorvector, ConstructorWithParamValueAndValue) {
+TEST(VectorTestConstructor, ConstructorWithParamValueAndValue) {
   char n = 2;
   char m = 'b';
   try {
@@ -240,7 +240,7 @@ TEST(TestConstructorvector, ConstructorWithParamValueAndValue) {
   }
 }
 
-TEST(TestConstructorvectorConst, ConstructorWithParamValueAndValue) {
+TEST(VectorTestConstructorConst, ConstructorWithParamValueAndValue) {
   char n = 2;
   char m = 'b';
   try {
@@ -254,7 +254,7 @@ TEST(TestConstructorvectorConst, ConstructorWithParamValueAndValue) {
   }
 }
 
-TEST(TestConstructorvector, Copy_1) {
+TEST(VectorTestConstructor, Copy_1) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -264,7 +264,7 @@ TEST(TestConstructorvector, Copy_1) {
   EXPECT_EQ(v2.size(), v.size());
 }
 
-TEST(TestConstructorvector, Copy_2) {
+TEST(VectorTestConstructor, Copy_2) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -275,7 +275,7 @@ TEST(TestConstructorvector, Copy_2) {
   EXPECT_EQ(v2.size(), v.size());
 }
 
-TEST(TestConstructorvector, Copy_3) {
+TEST(VectorTestConstructor, Copy_3) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -289,7 +289,7 @@ TEST(TestConstructorvector, Copy_3) {
   EXPECT_EQ(v2.capacity(), cap);
   EXPECT_EQ(v2.size(), size);
 }
-TEST(TestConstructorvector, Move_1) {
+TEST(VectorTestConstructor, Move_1) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -302,7 +302,7 @@ TEST(TestConstructorvector, Move_1) {
   EXPECT_EQ(n, v2[0]);
 }
 
-TEST(TestConstructorvector, Move_2) {
+TEST(VectorTestConstructor, Move_2) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -315,7 +315,7 @@ TEST(TestConstructorvector, Move_2) {
   EXPECT_EQ(n, v2[0]);
 }
 
-TEST(TestConstructorvector, Assign_1) {
+TEST(VectorTestConstructor, Assign_1) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -327,7 +327,7 @@ TEST(TestConstructorvector, Assign_1) {
   EXPECT_EQ(10, v[0]);
 }
 
-TEST(TestConstructorvector, Assign_2) {
+TEST(VectorTestConstructor, Assign_2) {
   int n = 3;
   vector<int> v;
   v.push_back(n);
@@ -340,7 +340,7 @@ TEST(TestConstructorvector, Assign_2) {
   EXPECT_EQ(10, v[2]);
 }
 
-TEST(TestConstructorvector, ConstructFromAnotherInt_1) {
+TEST(VectorTestConstructor, ConstructFromAnotherInt_1) {
   int n = 3;
   vector<int> v(2);
   v.push_back(n);
@@ -352,7 +352,7 @@ TEST(TestConstructorvector, ConstructFromAnotherInt_1) {
   }
 }
 
-TEST(TestConstructorvector, ConstructFromAnotherInt_2) {
+TEST(VectorTestConstructor, ConstructFromAnotherInt_2) {
   int n = 3;
   vector<int> v(2);
   v.push_back(n);
@@ -364,7 +364,7 @@ TEST(TestConstructorvector, ConstructFromAnotherInt_2) {
   }
 }
 
-TEST(TestConstructorvector, ConstructFromEqual_1) {
+TEST(VectorTestConstructor, ConstructFromEqual_1) {
   int n = 3;
   vector<int> v(2);
   v.push_back(n);
@@ -376,7 +376,7 @@ TEST(TestConstructorvector, ConstructFromEqual_1) {
   }
 }
 
-TEST(TestFuncs, ResizeInt_1) {
+TEST(VectorVectorTestFuncs, ResizeInt_1) {
   int n = 10;
   int m = 2;
   vector<int> v;
@@ -386,7 +386,7 @@ TEST(TestFuncs, ResizeInt_1) {
   EXPECT_EQ(m, v.size());
 }
 
-TEST(TestFuncs, ResizeInt_2) {
+TEST(VectorVectorTestFuncs, ResizeInt_2) {
   int n = 10;
   int m = 5;
   int y = 60;
@@ -400,7 +400,7 @@ TEST(TestFuncs, ResizeInt_2) {
   EXPECT_EQ(m, v.size());
 }
 
-TEST(TestFuncs, ResizeInt_3) {
+TEST(VectorVectorTestFuncs, ResizeInt_3) {
   int n = 10;
   int m = 10;
   int y = 60;
@@ -414,28 +414,28 @@ TEST(TestFuncs, ResizeInt_3) {
   EXPECT_EQ(m, v.size());
 }
 
-TEST(TestFuncs, ReserveInt) {
+TEST(VectorVectorTestFuncs, ReserveInt) {
   int n = 2;
   vector<int> v;
   v.reserve(n);
   EXPECT_EQ(n, v.capacity());
 }
 
-TEST(TestFuncs, PushBackInt) {
+TEST(VectorVectorTestFuncs, PushBackInt) {
   int n = 2;
   vector<int> v;
   v.push_back(n);
   EXPECT_EQ(n, v[0]);
 }
 
-TEST(TestFuncs, PushBackMoveInt) {
+TEST(VectorVectorTestFuncs, PushBackMoveInt) {
   int n = 2;
   vector<int> v;
   v.push_back(std::move(n));
   EXPECT_EQ(2, v[0]);
 }
 
-TEST(TestFuncs, PopBackInt) {
+TEST(VectorVectorTestFuncs, PopBackInt) {
   int n = 2;
   vector<int> v;
   v.push_back(n);
@@ -445,7 +445,7 @@ TEST(TestFuncs, PopBackInt) {
   EXPECT_EQ(1, v.size());
 }
 
-TEST(TestFuncs, SwapInt) {
+TEST(VectorVectorTestFuncs, SwapInt) {
   int n = 2;
   vector<int> v;
   v.push_back(n);
@@ -459,7 +459,7 @@ TEST(TestFuncs, SwapInt) {
   EXPECT_EQ(m, v[0]);
 }
 
-TEST(TestFuncs, ShrinkToFit) {
+TEST(VectorVectorTestFuncs, ShrinkToFit) {
   int n = 2;
   vector<int> v;
   v.push_back(n);
@@ -474,7 +474,7 @@ TEST(TestFuncs, ShrinkToFit) {
   EXPECT_EQ(n, v[0]);
 }
 
-TEST(TestFuncs, Clear) {
+TEST(VectorVectorTestFuncs, Clear) {
   int n = 2;
   vector<int> v;
   v.push_back(n);
@@ -486,14 +486,14 @@ TEST(TestFuncs, Clear) {
   EXPECT_EQ(cap, v.capacity());
 }
 
-TEST(TestAccess, AtNoExInt) {
+TEST(VectorTestAccess, AtNoExInt) {
   int n = 2;
   vector<int> v;
   v.push_back(n);
   EXPECT_EQ(n, v.at(0));
 }
 
-TEST(TestAccess, AtExInt_1) {
+TEST(VectorTestAccess, AtExInt_1) {
   vector<int> v;
   try {
     v.at(-1);
@@ -503,7 +503,7 @@ TEST(TestAccess, AtExInt_1) {
   }
 }
 
-TEST(TestAccess, AtExInt_2) {
+TEST(VectorTestAccess, AtExInt_2) {
   vector<int> v;
   try {
     v.at(0);
@@ -513,7 +513,7 @@ TEST(TestAccess, AtExInt_2) {
   }
 }
 
-TEST(TestAccess, Data) {
+TEST(VectorTestAccess, Data) {
   vector<int> v;
   EXPECT_EQ(v.data(), nullptr);
 
@@ -525,14 +525,14 @@ TEST(TestAccess, Data) {
   EXPECT_EQ(data[1], v[1]);
 }
 
-TEST(TestAccessConst, Data) {
+TEST(VectorTestAccessConst, Data) {
   const vector<int> v(2);
   const int* data = v.data();
   EXPECT_EQ(data[0], 0);
   EXPECT_EQ(data[1], 0);
 }
 
-TEST(TestAccess, FrontBack) {
+TEST(VectorTestAccess, FrontBack) {
   vector<int> v;
   int n = 2, m = 3;
   v.push_back(n);
@@ -542,60 +542,60 @@ TEST(TestAccess, FrontBack) {
   EXPECT_EQ(v.back(), m);
 }
 
-TEST(TestAccessConst, FrontBack) {
+TEST(VectorTestAccessConst, FrontBack) {
   const vector<int> v(2);
   EXPECT_EQ(v.front(), 0);
   EXPECT_EQ(v.back(), 0);
 }
 
-TEST(TestConstructorvectorConst, InitializerList) {
+TEST(VectorTestConstructorConst, InitializerList) {
   const vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
 }
 
-TEST(TestConstructorvectorConst, InitializerListEqual) {
+TEST(VectorTestConstructorConst, InitializerListEqual) {
   const vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
 }
 
-TEST(TestAccessConst, InitListFrontBack) {
+TEST(VectorTestAccessConst, InitListFrontBack) {
   const vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
   EXPECT_EQ(letters.front(), 'a');
   EXPECT_EQ(letters.back(), 'f');
 }
 
-TEST(TestAccessConst, InitListEqualFrontBack) {
+TEST(VectorTestAccessConst, InitListEqualFrontBack) {
   const vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
   EXPECT_EQ(letters.front(), 'a');
   EXPECT_EQ(letters.back(), 'f');
 }
 
-TEST(TestConstructorvector, InitializerList) {
+TEST(VectorTestConstructor, InitializerList) {
   vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
 }
 
-TEST(TestConstructorvector, InitializerListEqual) {
+TEST(VectorTestConstructor, InitializerListEqual) {
   vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
 }
 
-TEST(TestAccess, InitListFrontBack) {
+TEST(VectorTestAccess, InitListFrontBack) {
   vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f'};
   EXPECT_EQ(letters.front(), 'a');
   EXPECT_EQ(letters.back(), 'f');
 }
 
-TEST(TestAccess, InitListEqualFrontBack) {
+TEST(VectorTestAccess, InitListEqualFrontBack) {
   vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
   EXPECT_EQ(letters.front(), 'a');
   EXPECT_EQ(letters.back(), 'f');
 }
 
-TEST(TestAccess, InitListEqualFrontBack_2) {
+TEST(VectorTestAccess, InitListEqualFrontBack_2) {
   vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f'};
   letters = {'g', 'h'};
   EXPECT_EQ(letters.front(), 'g');
   EXPECT_EQ(letters.back(), 'h');
 }
 
-TEST(TestIter, Begin) {
+TEST(VectorTestIter, Begin) {
   vector<char> letters = {'g', 'h'};
   std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.begin();
@@ -607,7 +607,7 @@ TEST(TestIter, Begin) {
   }
 }
 
-TEST(TestIterConst, Begin) {
+TEST(VectorTestIterConst, Begin) {
   const vector<char> letters = {'g', 'h'};
   const std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.begin();
@@ -619,7 +619,7 @@ TEST(TestIterConst, Begin) {
   }
 }
 
-TEST(TestIter, Cbegin) {
+TEST(VectorTestIter, Cbegin) {
   vector<char> letters = {'g', 'h'};
   std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.cbegin();
@@ -631,7 +631,7 @@ TEST(TestIter, Cbegin) {
   }
 }
 
-TEST(TestIterConst, Cbegin) {
+TEST(VectorTestIterConst, Cbegin) {
   const vector<char> letters = {'g', 'h'};
   const std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.cbegin();
@@ -643,7 +643,7 @@ TEST(TestIterConst, Cbegin) {
   }
 }
 
-TEST(TestIter, Rbegin) {
+TEST(VectorTestIter, Rbegin) {
   vector<char> letters = {'g', 'h'};
   std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.rbegin();
@@ -655,7 +655,7 @@ TEST(TestIter, Rbegin) {
   }
 }
 
-TEST(TestIterConst, Rbegin) {
+TEST(VectorTestIterConst, Rbegin) {
   const vector<char> letters = {'g', 'h'};
   const std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.rbegin();
@@ -667,7 +667,7 @@ TEST(TestIterConst, Rbegin) {
   }
 }
 
-TEST(TestIter, Crbegin) {
+TEST(VectorTestIter, Crbegin) {
   vector<char> letters = {'g', 'h'};
   std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.crbegin();
@@ -679,7 +679,7 @@ TEST(TestIter, Crbegin) {
   }
 }
 
-TEST(TestIterConst, Crbegin) {
+TEST(VectorTestIterConst, Crbegin) {
   const vector<char> letters = {'g', 'h'};
   const std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.crbegin();
@@ -695,7 +695,7 @@ TEST(TestIterConst, Crbegin) {
 // There will be 8 leaks for 4 tests: one for our implementation
 // and another for real vector.
 
-TEST(TestIter, Rend) {
+TEST(VectorTestIter, Rend) {
   vector<char> letters = {'g', 'h'};
   std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.rend();
@@ -707,7 +707,7 @@ TEST(TestIter, Rend) {
   }
 }
 
-TEST(TestIterConst, Rend) {
+TEST(VectorTestIterConst, Rend) {
   const vector<char> letters = {'g', 'h'};
   const std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.rend();
@@ -719,7 +719,7 @@ TEST(TestIterConst, Rend) {
   }
 }
 
-TEST(TestIter, Crend) {
+TEST(VectorTestIter, Crend) {
   vector<char> letters = {'g', 'h'};
   std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.crend();
@@ -731,7 +731,7 @@ TEST(TestIter, Crend) {
   }
 }
 
-TEST(TestIterConst, Crend) {
+TEST(VectorTestIterConst, Crend) {
   const vector<char> letters = {'g', 'h'};
   const std::vector<char> letters_std = {'g', 'h'};
   auto it = letters.crend();
@@ -743,17 +743,17 @@ TEST(TestIterConst, Crend) {
   }
 }
 
-TEST(TestFunc, EmptyFalse) {
+TEST(VectorVectorTestFunc, EmptyFalse) {
   const vector<char> letters = {'g', 'h'};
   EXPECT_FALSE(letters.empty());
 }
 
-TEST(TestFunc, EmptyTrue) {
+TEST(VectorVectorTestFunc, EmptyTrue) {
   const vector<char> letters;
   EXPECT_TRUE(letters.empty());
 }
 
-TEST(TestIters, ConstructConst) {
+TEST(VectorTestIters, ConstructConst) {
   const vector<char> letters = {'g', 'h', 'l', 'k'};
   auto first = letters.begin();
   auto last = letters.end();
@@ -764,7 +764,7 @@ TEST(TestIters, ConstructConst) {
   }
 }
 
-TEST(TestIters, Construct) {
+TEST(VectorTestIters, Construct) {
   vector<char> letters = {'g', 'h', 'l', 'k'};
   auto first = letters.begin();
   auto last = letters.end();
@@ -775,7 +775,7 @@ TEST(TestIters, Construct) {
   }
 }
 
-TEST(TestIters, Insert) {
+TEST(VectorTestIters, Insert) {
   char to_insert_1 = 'o';
   char to_insert_2 = 'i';
 
@@ -802,7 +802,7 @@ TEST(TestIters, Insert) {
   }
 }
 
-TEST(TestIters, InsertMove) {
+TEST(VectorTestIters, InsertMove) {
   char to_insert_1 = 'o';
   char to_insert_2 = 'i';
 
@@ -827,7 +827,7 @@ TEST(TestIters, InsertMove) {
   }
 }
 
-TEST(TestIters, InsertCount) {
+TEST(VectorTestIters, InsertCount) {
   char to_insert_1 = 'o';
   char to_insert_2 = 'i';
 
@@ -851,7 +851,7 @@ TEST(TestIters, InsertCount) {
   }
 }
 
-TEST(TestIters, InsertCountNeg) {
+TEST(VectorTestIters, InsertCountNeg) {
   try {
     char to_insert = 'o';
     vector<char> new_letters = {'g', 'h', 'l', 'k'};
@@ -863,7 +863,7 @@ TEST(TestIters, InsertCountNeg) {
   }
 }
 
-TEST(TestIters, InsertIter) {
+TEST(VectorTestIters, InsertIter) {
   std::vector<char> list_1 = {'i', 'l', 'o', 'v', 'e', 'i', 't'};
   vector<char> list_2 = {'i', 'l', 'o', 'v', 'e', 'i', 't'};
 
@@ -881,7 +881,7 @@ TEST(TestIters, InsertIter) {
   }
 }
 
-TEST(TestIters, InsertList) {
+TEST(VectorTestIters, InsertList) {
   std::initializer_list<char> list = {'i', 'l', 'o', 'v', 'e', 'i', 't'};
 
   std::vector<char> letters = {'g', 'h', 'l', 'k'};
@@ -899,7 +899,7 @@ TEST(TestIters, InsertList) {
   }
 }
 
-TEST(TestIters, Erase) {
+TEST(VectorTestIters, Erase) {
   std::vector<char> letters = {'g', 'h', 'l', 'k', 'f', 'u', 'i'};
   auto pos_std = letters.begin() + 1;
   auto res = letters.erase(pos_std);
@@ -915,7 +915,7 @@ TEST(TestIters, Erase) {
   }
 }
 
-TEST(TestIters, EraseIter) {
+TEST(VectorTestIters, EraseIter) {
   std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
   auto fisrt_std = letters.begin() + 2;
   auto last_std = letters.begin() + 4;
@@ -933,55 +933,55 @@ TEST(TestIters, EraseIter) {
   }
 }
 
-TEST(TestCompare, Equal) {
+TEST(VectorTestCompare, Equal) {
   vector<char> v1 = {'g', 'h', 'l', 'k'};
   vector<char> v2 = {'g', 'h', 'l', 'k'};
   EXPECT_EQ(v1, v2);
 }
 
-TEST(TestCompare, NotEqual) {
+TEST(VectorTestCompare, NotEqual) {
   vector<char> v1 = {'g', 'h', 'l', 'k'};
   vector<char> v2 = {'g', 'h', 'l', 'l'};
   EXPECT_NE(v1, v2);
 }
 
-TEST(TestCompare, NotEqual2) {
+TEST(VectorTestCompare, NotEqual2) {
   vector<char> v1 = {'g', 'h', 'l'};
   vector<char> v2 = {'g', 'h', 'l', 'l'};
   EXPECT_NE(v1, v2);
 }
 
-TEST(TestCompare, Smaller) {
+TEST(VectorTestCompare, Smaller) {
   vector<char> v1 = {'g', 'h', 'l', 'k'};
   vector<char> v2 = {'g', 'h', 'l', 'l'};
   EXPECT_TRUE(v1 < v2);
 }
 
-TEST(TestCompare, Smaller2) {
+TEST(VectorTestCompare, Smaller2) {
   vector<char> v1 = {'g', 'h', 'l'};
   vector<char> v2 = {'g', 'h', 'l', 'l'};
   EXPECT_TRUE(v1 < v2);
 }
 
-TEST(TestCompare, Bigger) {
+TEST(VectorTestCompare, Bigger) {
   vector<char> v1 = {'g', 'h', 'l', 'k'};
   vector<char> v2 = {'g', 'h', 'l', 'l'};
   EXPECT_TRUE(v2 > v1);
 }
 
-TEST(TestCompare, BiggerOrEqual) {
+TEST(VectorTestCompare, BiggerOrEqual) {
   vector<char> v1 = {'g', 'h', 'l', 'k'};
   vector<char> v2 = {'g', 'h', 'l', 'k'};
   EXPECT_TRUE(v2 >= v1);
 }
 
-TEST(TestCompare, SmallerOrEqual) {
+TEST(VectorTestCompare, SmallerOrEqual) {
   vector<char> v1 = {'g', 'h', 'l', 'k'};
   vector<char> v2 = {'g', 'h', 'l', 'k'};
   EXPECT_TRUE(v2 <= v1);
 }
 
-TEST(TestFunc, EmplaceValue) {
+TEST(VectorTestFunc, EmplaceValue) {
   std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
   auto pos_std = letters.begin() + 2;
   char value = 'u';
@@ -998,7 +998,7 @@ TEST(TestFunc, EmplaceValue) {
   }
 }
 
-TEST(TestFunc, EmplaceBack) {
+TEST(VectorTestFunc, EmplaceBack) {
   std::vector<char> letters = {'g', 'h', 'l', 'k', 'j', 'o', 'a', 's'};
   char value = 'u';
   auto res = letters.emplace_back(value);
@@ -1013,7 +1013,7 @@ TEST(TestFunc, EmplaceBack) {
   }
 }
 
-TEST(TestFunc, EmplaceString) {
+TEST(VectorTestFunc, EmplaceString) {
   std::vector<std::string> vtr = {"donkey",        "goat",   "cat",   "pig",
                                   "dog",           "Cow",    "Sheep", "horse",
                                   "water buffalo", "red fox"};
@@ -1032,7 +1032,7 @@ TEST(TestFunc, EmplaceString) {
   }
 }
 
-TEST(TestAlloc, GetAlloc) {
+TEST(VectorTestAlloc, GetAlloc) {
   vector<int> other = {1, 2, 3};
   auto alloc = other.get_allocator();
   try {
@@ -1041,9 +1041,4 @@ TEST(TestAlloc, GetAlloc) {
   } catch (...) {
     FAIL();
   }
-}
-
-int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }
