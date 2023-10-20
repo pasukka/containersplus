@@ -1,11 +1,12 @@
 #ifndef CONTAINERS_LIB_VECTOR_H_
 #define CONTAINERS_LIB_VECTOR_H_
 
+#include <stdint.h>
+
 #include <cstddef>
 #include <iostream>
 #include <iterator>
 #include <memory>
-#include <stdint> 
 
 template <class T, class Allocator = std::allocator<T>>
 class vector {
@@ -20,8 +21,9 @@ class vector {
   using iterator = pointer;
   using const_iterator = const_pointer;
   using difference_type = std::ptrdiff_t;
+  using allocator_type = Allocator;
 
-  typedef typename alloc_traits::value_type allocator_type;
+  // typedef typename alloc_traits::value_type allocator_type;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -97,7 +99,7 @@ class vector {
         v_alloc.construct(v_data + pos, *first);
         ++first;
       }
-    } catch (...) {  // TODO
+    } catch (...) {
       destroy_elements(pos);
       throw;
     }
@@ -141,7 +143,7 @@ class vector {
     return *this;
   };
 
-  // allocator_type get_allocator() const noexcept { return v_alloc; };  // TODO
+  allocator_type get_allocator() const noexcept { return v_alloc; };
 
   // --------------------- ELEMENT ACCESS ---------------------
   reference at(size_type pos) {
@@ -373,7 +375,7 @@ class vector {
       for (size_type i = start; i < count; ++i) {
         v_alloc.construct(data + i, value);
       }
-    } catch (...) {  // TODO
+    } catch (...) {
       destroy_elements(count, start);
       throw;
     }
@@ -382,7 +384,7 @@ class vector {
   void push(const T& value) {
     try {
       v_alloc.construct(v_data + v_size, value);
-    } catch (...) {  // TODO
+    } catch (...) {
       v_alloc.destroy(v_data + v_size);
       throw;
     }
