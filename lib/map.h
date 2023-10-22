@@ -28,9 +28,10 @@ class map {
  public:
   class Node {
    public:
-    Node() : data(nullptr), parent(nullptr), left(nullptr), right(nullptr) {};
-    Node(value_type data) : data(data), parent(nullptr), left(nullptr), right(nullptr) {};
-   
+    Node() : data(nullptr), parent(nullptr), left(nullptr), right(nullptr){};
+    Node(value_type data)
+        : data(data), parent(nullptr), left(nullptr), right(nullptr){};
+
    private:
     value_type data;
     Node* parent;
@@ -47,20 +48,18 @@ class map {
 
   explicit map(const Compare& comp, const Allocator& alloc = Allocator()){};
 
-  map( const map& other ) {
+  map(const map& other) {
     alloc_ = other.alloc_;
     copy_elements(other);
   };
 
-  map( const map& other, const Allocator& alloc ) {
+  map(const map& other, const Allocator& alloc) {
     alloc_ = alloc;
     copy_elements(other);
   };
 
-  map(map&& other) noexcept  {
-      : data_(other.data_),
-        size_(other.size_),
-        alloc_(other.alloc_) {
+  map(map&& other) noexcept
+      : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {
     other.data_ = nullptr;
     other.size_ = 0;
     other.alloc_ = Allocator();
@@ -75,8 +74,8 @@ class map {
       : map(init, Compare(), alloc) {}
 
   // ------- Destructors -------
-  ~map() {};
-	
+  ~map(){};
+
   // ------- Copy -------
   map& operator=(const map& other){};
 
@@ -136,14 +135,17 @@ class map {
   void clear() noexcept { size_ = 0; };
 
   // insert
-  
+  std::pair<iterator, bool> insert(const value_type& value) {
+    return insert_unique(std::move(value));
+  };
+
   // insert_or_assign
 
-  template< class... Args >
-  std::pair<iterator, bool> emplace( Args&&... args );
+  template <class... Args>
+  std::pair<iterator, bool> emplace(Args&&... args);
 
-  template< class... Args >
-  iterator emplace_hint( const_iterator hint, Args&&... args );
+  template <class... Args>
+  iterator emplace_hint(const_iterator hint, Args&&... args);
 
   // try_emplace
 
@@ -156,7 +158,7 @@ class map {
   };
 
   // extract
-  
+
   // merge
 
   // ------- Lookup -------
@@ -166,14 +168,15 @@ class map {
   // value_comp
 
  private:
-  value_type data_;
+  Node* data_;
   size_type size_;
   Allocator alloc_;
 
   void copy_elements(map&& other) {
     int count = 0;
     try {
-      for (iterator i = &other.data_[0]; i != &other.data_[other.size_]; ++i, ++count) {
+      for (iterator i = &other.data_[0]; i != &other.data_[other.size_];
+           ++i, ++count) {
         alloc_.construct(&data_[count], *i);
       }
     } catch (...) {
@@ -188,6 +191,16 @@ class map {
     }
   }
 
+  pair<iterator, bool> insert_unique(value_type&& value) {
+    bool output = true;
+    typedef pair<iterator, bool> _Res;
+
+    insert_unique_pos(_KeyOfValue()(__v))
+
+    // else: output = false;
+
+    return _Res(iterator(__res.first), output);
+  };
 };
 
 #endif  // CONTAINERS_LIB_MAP_H_
