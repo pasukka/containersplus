@@ -21,10 +21,15 @@ TEST(MapTestConstructor, SimpleConstructorInt) {
 //   EXPECT_EQ(val, map1["something"]);
 // }
 
-
 TEST(MapTestInsert, SimpleInsert) {
-    map<int, int> m1;
-    m1.insert({ 1, 10 });
+  map<int, int> m1;
+  int num = 10;
+  auto aa = m1.insert({1, num});
+  EXPECT_EQ(aa.second, true);
+  EXPECT_EQ(m1[1], num);
+  for (size_t i = 0; i < m1.size(); ++i) {
+    printf("\n %d \n", *(aa.first));
+    // EXPECT_EQ(*it, *std_it);
+  }
 
-    
 }
