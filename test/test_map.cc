@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 #include <string>
 
 #include "map.h"
@@ -9,8 +10,41 @@
 TEST(MapTestConstructor, SimpleConstructorInt) {
   map<int, int> map1;
   EXPECT_EQ(0, map1.size());
+}
 
-  std::map<int, int> m;
+TEST(MapTestInsert, SimpleInsertInt) {
+  map<int, int> map1;
+  int val = 60;
+  map1.insert({2, val});
+  map1.insert({1, val});
+  map1.insert({3, val});
+  map1.insert({4, val});
+  EXPECT_EQ(val, map1[3]);
+}
+
+TEST(MapTestInsert, SimpleInsertInt2) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  EXPECT_EQ(val, map1[key]);
+}
+
+TEST(MapTestIter, IteratorBeginEnd) {
+  map<int, float> num_map;
+  std::vector v1 = {4, 9, 1};
+  std::vector v2 = {4.13, 9.24, 1.09};
+
+  num_map.insert({4, 4.13});
+  num_map.insert({9, 9.24});
+  num_map.insert({1, 1.09});
+  EXPECT_EQ(3, num_map.size());
+
+  size_t i = 0;
+  // for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
+  //   EXPECT_EQ(it->first, v1[i]);
+  //   EXPECT_EQ(it->second, v2[i]);
+  // }
 }
 
 // TEST(MapTestConstructor, SimpleConstructorString) {
@@ -20,16 +54,3 @@ TEST(MapTestConstructor, SimpleConstructorInt) {
 //   EXPECT_EQ(1, map1.size());
 //   EXPECT_EQ(val, map1["something"]);
 // }
-
-TEST(MapTestInsert, SimpleInsert) {
-  map<int, int> m1;
-  int num = 10;
-  auto aa = m1.insert({1, num});
-  EXPECT_EQ(aa.second, true);
-  EXPECT_EQ(m1[1], num);
-  for (size_t i = 0; i < m1.size(); ++i) {
-    printf("\n %d \n", *(aa.first));
-    // EXPECT_EQ(*it, *std_it);
-  }
-
-}
