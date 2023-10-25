@@ -2,14 +2,31 @@
 
 #include <iostream>
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "map.h"
 
 TEST(MapTestConstructor, SimpleConstructorInt) {
   map<int, int> map1;
   EXPECT_EQ(0, map1.size());
+}
+
+// TEST(MapTestConstructor, SimpleConstructorString) {
+//   map<std::string, int> map1;
+//   int val = 69;
+//   map1["something"] = val;
+//   EXPECT_EQ(1, map1.size());
+//   EXPECT_EQ(val, map1["something"]);
+// }
+
+TEST(MapTestCopy, Copy_1) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map<int, int> map2 = map1;
+  // add comparison
 }
 
 TEST(MapTestInsert, SimpleInsertInt) {
@@ -41,16 +58,39 @@ TEST(MapTestIter, IteratorBeginEnd) {
   EXPECT_EQ(3, num_map.size());
 
   size_t i = 0;
-  // for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
-  //   EXPECT_EQ(it->first, v1[i]);
-  //   EXPECT_EQ(it->second, v2[i]);
-  // }
+  for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
+    // printf("\n %d %f \n", , );
+    EXPECT_EQ(it->first, v1[i]);
+    EXPECT_EQ(it->second, v2[i]);
+  }
 }
 
-// TEST(MapTestConstructor, SimpleConstructorString) {
-//   map<std::string, int> map1;
-//   int val = 69;
-//   map1["something"] = val;
-//   EXPECT_EQ(1, map1.size());
-//   EXPECT_EQ(val, map1["something"]);
-// }
+TEST(MapTestFind, FindNoKey) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  // map1.insert({key+2, val+2});
+  EXPECT_NE(val, map1[1]);
+}
+
+TEST(MapTestAt, AtKey) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  EXPECT_EQ(val, map1.at(key));
+}
+
+TEST(MapTestAt, AtNoKey) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  try {
+    map1.at(1);
+    FAIL();
+  } catch (...) {
+    SUCCEED();
+  }
+}
