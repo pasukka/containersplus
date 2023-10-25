@@ -62,7 +62,7 @@ class tree {
   };
 
   Node* find_node(Node* node, const Key& key) {
-    if (null(node) || key == node->data.first) {
+    if ((node == nullptr) || key == node->data.first) {
       return node;
     }
     if (key < node->data.first) {

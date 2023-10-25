@@ -89,13 +89,16 @@ class map {
   };
 
   T &operator[](const Key &key) {
-    iterator it = iterator(find(key));
-    return (*it).second;
+    return this->at(key);
   };
 
   T &operator[](Key &&key) {
-    iterator it = iterator(find(key));
-    return (*it).second;
+    iterator it = find(key);
+    if ((*it).second) {
+      return (*it).second;
+    }
+    auto res = insert(value_type(key, 0));
+    return res.first->second;
   };
 
   // ------- Iterators -------
