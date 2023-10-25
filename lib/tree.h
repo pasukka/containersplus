@@ -37,9 +37,23 @@ class tree {
 
   tree() : data_(nullptr), size_(0), alloc_(Allocator()){};
 
-  tree(const tree &other) {};
+  tree(const tree& other) : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {};
 
-  iterator begin() { return iterator(&data_[0]); };
+  tree(tree &&other) noexcept
+      : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {
+    other.data_ = nullptr;
+    other.size_ = 0;
+    other.alloc_ = Allocator();
+  };
+
+  tree &operator=(const tree &other) {
+    tree copy(other);
+    swap(copy);
+  };
+
+  iterator begin() { return iterator(data_); };
+
+  iterator end() { return iterator(data_ + size_); };
 
   size_type size() const noexcept { return size_; };
 
@@ -103,6 +117,12 @@ class tree {
   //   ++size_;
   //   return std::pair<iterator, bool>(iterator(newNode), insert);
   // };
+
+  void swap(tree &other) noexcept {
+    std::swap(data_, other.data_);
+    std::swap(size_, other.size_);
+    std::swap(alloc_, other.alloc_);
+  };
 
   //  private:
   Node* data_;
