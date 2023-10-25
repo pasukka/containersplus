@@ -65,21 +65,48 @@ TEST(MapTestIter, IteratorBeginEnd) {
   }
 }
 
-TEST(MapTestFind, FindNoKey) {
+TEST(MapTestAccess, AccessNoKey_1) {
   map<int, int> map1;
   int val = 60;
   int key = 2;
   map1.insert({key, val});
-  // map1.insert({key+2, val+2});
-  EXPECT_NE(val, map1[1]);
+  try {
+    map1[1];
+    FAIL();
+  } catch (std::out_of_range &ex) {
+    SUCCEED();
+  }
 }
 
-TEST(MapTestAt, AtKey) {
+TEST(MapTestAccess, AccessNoKey_2) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  --key;
+  try {
+    map1[key];
+    FAIL();
+  } catch (std::out_of_range &ex) {
+    SUCCEED();
+  }
+}
+
+TEST(MapTestAt, AtKey_1) {
   map<int, int> map1;
   int val = 60;
   int key = 2;
   map1.insert({key, val});
   EXPECT_EQ(val, map1.at(key));
+}
+
+TEST(MapTestAt, AtKey_2) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map1.insert({key+1, val+1});
+  EXPECT_EQ(val+1, map1.at(key+1));
 }
 
 TEST(MapTestAt, AtNoKey) {
