@@ -39,22 +39,16 @@ class map {
 
   map(const map &other) : root(other.root) {};
 
-  // map(const map &other, const Allocator &alloc) {
-  //   alloc_ = alloc;
-  //   copy_elements(other);
-  // };
+  map(const map &other, const Allocator &alloc) : root(other.root) {
+    root.alloc_ = alloc;
+  };
 
-  // map(map &&other) noexcept
-  //     : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {
-  //   other.data_ = nullptr;
-  //   other.size_ = 0;
-  //   other.alloc_ = Allocator();
-  // };
+  map(map &&other) noexcept : root(other.root) {};
 
-  // map(map &&other, const Allocator &alloc) noexcept : map(other) {
-  //   alloc_ = alloc;
-  //   other.alloc_ = Allocator();
-  // };
+  map(map &&other, const Allocator &alloc) noexcept : map(other) {
+    root.alloc_ = alloc;
+    other.root.alloc_ = Allocator();
+  };
 
   // map(std::initializer_list<value_type> init, const Allocator &alloc)
   //     : map(init, Compare(), alloc) {}
@@ -63,37 +57,55 @@ class map {
   ~map(){};
 
   // ------- Copy -------
-  map &operator=(const map &other){};
+  map &operator=(const map &other) {
+    map copy(other);
+    swap(copy);
+  };
 
-  map &operator=(map &&other) noexcept {};
+  map &operator=(map &&other) noexcept {
+    swap(other);
+    return *this;
+  };
 
   map &operator=(std::initializer_list<value_type> ilist){};
 
   allocator_type get_allocator() const noexcept { return root.alloc_; };
 
   // ------- Element access -------
-  T &at(const Key &key){};
+  T &at(const Key &key) {
+    iterator it = find(key);
+    if (it == end()) {
+      throw std::out_of_range("Invalid key.");
+    }
+    return (*it).second;
+  };
 
-  const T &at(const Key &key) const {};
+  const T &at(const Key &key) const {
+    const_iterator it = find(key);
+    if (it == end()) {
+      throw std::out_of_range("Invalid key.");
+    }
+    return (*it).second;
+  };
 
   T &operator[](const Key &key) {
-    iterator it = iterator(root.find_node(root.data_, key));
+    iterator it = iterator(find(key));
     return (*it).second;
   };
 
   T &operator[](Key &&key) {
-    iterator it = iterator(root.find_node(root.data_, key));
+    iterator it = iterator(find(key));
     return (*it).second;
   };
 
   // ------- Iterators -------
-  iterator begin() { return iterator(root.data_); };
-  const_iterator begin() const noexcept { return root.data_[0]; };
-  const_iterator cbegin() const noexcept { return root.data_[0]; };
+  iterator begin() { return root.begin(); };
+  const_iterator begin() const noexcept { return root.begin(); };
+  const_iterator cbegin() const noexcept { return root.begin(); };
 
-  iterator end() { return iterator(root.data_ + root.size_); };
-  const_iterator end() const noexcept { return root.data_[root.size_]; };
-  const_iterator cend() const noexcept { return root.data_[root.size_]; };
+  iterator end() { return root.end(); };
+  const_iterator end() const noexcept { return root.end(); };
+  const_iterator cend() const noexcept { return root.end(); };
 
   reverse_iterator rbegin() noexcept { return reverse_iterator(end()); };
   reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
@@ -143,17 +155,15 @@ class map {
 
   // erase
 
-  void swap(map &other) noexcept {
-    std::swap(root.data_, other.data_);
-    std::swap(root.size_, other.size_);
-    std::swap(root.alloc_, other.alloc_);
-  };
-
   // extract
 
   // merge
 
   // ------- Lookup -------
+
+  iterator find(const Key &key) {
+    return iterator(root.find_node(root.data_, key));
+  };
 
   // ------- Observers -------
   //  key_comp
