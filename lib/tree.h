@@ -37,16 +37,19 @@ class tree {
 
   tree() : data_(nullptr), size_(0), alloc_(Allocator()){};
 
-  tree(const tree& other) : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {};
+  tree(const tree& other)
+      : data_(other.data_), size_(other.size_), alloc_(other.alloc_){};
 
-  tree(tree &&other) noexcept
+  tree(tree&& other) noexcept
       : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {
     other.data_ = nullptr;
     other.size_ = 0;
     other.alloc_ = Allocator();
   };
 
-  tree &operator=(const tree &other) {
+  ~tree() {}  // TODO
+
+  tree& operator=(const tree& other) {
     tree copy(other);
     swap(copy);
   };
@@ -71,20 +74,22 @@ class tree {
     return find_node(node->right, key);
   }
 
+  bool exists(const Key& key) { return (find_node(data_, key) == nullptr); }
+
   std::pair<iterator, bool> insert_unique(const value_type& value) {
     bool insert = false;
     Node* newNode = new Node(value);
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = nullptr;
+    Key key = value.first;
     if (data_ == nullptr) {
       data_ = newNode;
       ++size_;
       insert = true;
-    } else {  // TODO: if (!exists(key))
+    } else {  // if (!exists(key))
       Node* current = data_;
       Node* prev = data_;
-      Key key = value.first;
       int left;
       while (current != nullptr) {
         if (key < current->data.first) {
@@ -108,17 +113,7 @@ class tree {
     return std::pair<iterator, bool>(iterator(begin()), insert);
   };
 
-  // std::pair<iterator, bool> insert_unique_pos(Key key, T value) {
-  //   bool insert = false;
-  //   Node* newNode = new Node(value_type(key, value));
-  //   newNode->right = nullptr;
-  //   newNode->left = nullptr;
-  //   newNode->parent = nullptr;
-  //   ++size_;
-  //   return std::pair<iterator, bool>(iterator(newNode), insert);
-  // };
-
-  void swap(tree &other) noexcept {
+  void swap(tree& other) noexcept {
     std::swap(data_, other.data_);
     std::swap(size_, other.size_);
     std::swap(alloc_, other.alloc_);

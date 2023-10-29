@@ -10,7 +10,7 @@ template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
 class map {
   using key_type = Key;
-  using mapped_type = T;
+  using val_type = T;
   using value_type = std::pair<const Key, T>;
   using size_type = std::size_t;
   using difference_type = std::ptrdiff_t;
@@ -35,15 +35,13 @@ class map {
   // ------- Constructors -------
   map() : root(){};
 
-  // explicit map(const Compare &comp, const Allocator &alloc = Allocator()){};
-
-  map(const map &other) : root(other.root) {};
+  map(const map &other) : root(other.root){};
 
   map(const map &other, const Allocator &alloc) : root(other.root) {
     root.alloc_ = alloc;
   };
 
-  map(map &&other) noexcept : root(other.root) {};
+  map(map &&other) noexcept : root(other.root){};
 
   map(map &&other, const Allocator &alloc) noexcept : map(other) {
     root.alloc_ = alloc;
@@ -89,16 +87,21 @@ class map {
   };
 
   T &operator[](const Key &key) {
-    return this->at(key);
+    iterator it = find(key);
+    if (it == end()) {
+      auto result = insert(value_type(key, val_type()));
+      it = result.first;
+    }
+    return (*it).second;
   };
 
   T &operator[](Key &&key) {
     iterator it = find(key);
-    if ((*it).second) {
-      return (*it).second;
+    if (it == end()) {
+      auto result = insert(value_type(std::move(key), val_type()));
+      it = result.first;
     }
-    auto res = insert(value_type(key, 0));
-    return res.first->second;
+    return (*it).second;
   };
 
   // ------- Iterators -------
