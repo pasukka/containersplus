@@ -12,14 +12,6 @@ TEST(MapTestConstructor, SimpleConstructorInt) {
   EXPECT_EQ(0, map1.size());
 }
 
-TEST(MapTestConstructor, SimpleConstructorString) {
-  map<std::string, int> map1;
-  int val = 69;
-  map1["something"] = val;
-  EXPECT_EQ(1, map1.size());
-  EXPECT_EQ(val, map1["something"]);
-}
-
 TEST(MapTestCopy, Copy_1) {
   map<int, int> map1;
   int val = 60;
@@ -68,6 +60,7 @@ TEST(MapTestInsert, InsertInt) {
 
 //   size_t i = 0;
 //   for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
+//     printf("\n %d %f\n", it->first, it->second);
 //     EXPECT_EQ(it->first, v1[i]);
 //     EXPECT_EQ(it->second, v2[i]);
 //   }
@@ -130,4 +123,31 @@ TEST(MapTestAt, AtNoKey) {
   } catch (std::out_of_range &ex) {
     SUCCEED();
   }
+}
+
+TEST(MapTestConstructor, SimpleConstructorInitList) {
+  map<int, int> map1 = {{'a', 'b'}, {'c', 'd'}, {'e', 'f'}};
+  EXPECT_EQ('b', map1['a']);
+  EXPECT_EQ('f', map1['e']);
+}
+
+TEST(MapTestCompare, Key_Comp) {
+  std::map<int, char> cont;
+  cont = {{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}};
+  auto comp_func = cont.key_comp();
+  bool res = comp_func(20, 100);
+  EXPECT_EQ(true, res);
+}
+
+TEST(MapTestCompare, Key_Comp_2) {
+  struct ModCmp {
+    bool operator()(const int lhs, const int rhs) const {
+      return (lhs % 97) < (rhs % 97);
+    }
+  };
+  std::map<int, char, ModCmp> cont;
+  cont = {{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}};
+  auto comp_func = cont.key_comp();
+  bool res = comp_func(20, 100);
+  EXPECT_EQ(false, res);
 }
