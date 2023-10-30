@@ -83,11 +83,13 @@ class tree {
     newNode->left = nullptr;
     newNode->parent = nullptr;
     Key key = value.first;
+    iterator it = begin();
     if (data_ == nullptr) {
       data_ = newNode;
       ++size_;
       insert = true;
-    } else {  // if (!exists(key))
+      it = begin();
+    } else {  // TODO if (!exists(key))
       Node* current = data_;
       Node* prev = data_;
       int left;
@@ -109,8 +111,9 @@ class tree {
       }
       ++size_;
       insert = true;
+      it = iterator(newNode);
     }
-    return std::pair<iterator, bool>(iterator(begin()), insert);
+    return std::pair<iterator, bool>(it, insert);
   };
 
   void swap(tree& other) noexcept {
