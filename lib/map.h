@@ -70,7 +70,10 @@ class map {
     return *this;
   };
 
-  map &operator=(std::initializer_list<value_type> ilist){};
+  map &operator=(std::initializer_list<value_type> ilist) {
+    root = ilist;
+    return *this;
+  };
 
   allocator_type get_allocator() const noexcept { return root.alloc_; };
 

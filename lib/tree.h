@@ -58,10 +58,10 @@ class tree {
   tree(std::initializer_list<value_type> init, const Compare& comp = Compare(),
        const Allocator& alloc = Allocator())
       : tree() {
+    // TODO: needs to be erased at first
     alloc_ = alloc;
     key_comp_ = comp;
     for (auto element : init) {
-      printf("\naaa\n");
       insert_unique(element);
     }
   };
@@ -71,6 +71,14 @@ class tree {
   tree& operator=(const tree& other) {
     tree copy(other);
     swap(copy);
+  };
+
+  tree& operator=(std::initializer_list<value_type> ilist) {
+    // TODO: needs to be erased at first
+    for (auto element : ilist) {
+      insert_unique(element);
+    }
+    return *this;
   };
 
   iterator begin() { return iterator(data_); };
