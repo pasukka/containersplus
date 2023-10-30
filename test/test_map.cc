@@ -12,13 +12,13 @@ TEST(MapTestConstructor, SimpleConstructorInt) {
   EXPECT_EQ(0, map1.size());
 }
 
-// TEST(MapTestConstructor, SimpleConstructorString) {
-//   map<std::string, int> map1;
-//   int val = 69;
-//   map1["something"] = val;
-//   EXPECT_EQ(1, map1.size());
-//   EXPECT_EQ(val, map1["something"]);
-// }
+TEST(MapTestConstructor, SimpleConstructorString) {
+  map<std::string, int> map1;
+  int val = 69;
+  map1["something"] = val;
+  EXPECT_EQ(1, map1.size());
+  EXPECT_EQ(val, map1["something"]);
+}
 
 TEST(MapTestCopy, Copy_1) {
   map<int, int> map1;
@@ -26,7 +26,8 @@ TEST(MapTestCopy, Copy_1) {
   int key = 2;
   map1.insert({key, val});
   map<int, int> map2 = map1;
-  // add comparison
+  EXPECT_EQ(map1[key], map2[key]);
+  EXPECT_EQ(map1.size(), map2.size());
 }
 
 TEST(MapTestInsert, SimpleInsertInt) {
@@ -72,27 +73,23 @@ TEST(MapTestInsert, InsertInt) {
 //   }
 // }
 
-// TEST(MapTestAccess, AccessNoKey_1) {
-//   map<int, int> map1;
-//   int val = 60;
-//   int key = 2;
-//   map1.insert({key, val});
-//   EXPECT_EQ(0, map1[2]);
-// }
+TEST(MapTestAccess, AccessNoKey_1) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  EXPECT_EQ(0, map1[1]);
+  EXPECT_EQ(val, map1[key]);
+}
 
-// TEST(MapTestAccess, AccessNoKey_2) {
-//   map<int, int> map1;
-//   int val = 60;
-//   int key = 2;
-//   map1.insert({key, val});
-//   --key;
-//   try {
-//     map1[key];
-//     FAIL();
-//   } catch (std::out_of_range &ex) {
-//     SUCCEED();
-//   }
-// }
+TEST(MapTestAccess, AccessNoKey_2) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  int k = 1;
+  map1.insert({key, val});
+  EXPECT_EQ(0, map1[k]);
+}
 
 TEST(MapTestAt, AtKey_1) {
   map<int, int> map1;
@@ -122,15 +119,15 @@ TEST(MapTestAt, AtKey_3) {
   EXPECT_EQ(val + 23, map1.at(key + 23));
 }
 
-// TEST(MapTestAt, AtNoKey) {
-//   map<int, int> map1;
-//   int val = 60;
-//   int key = 2;
-//   map1.insert({key, val});
-//   try {
-//     map1.at(1);
-//     FAIL();
-//   } catch (...) {
-//     SUCCEED();
-//   }
-// }
+TEST(MapTestAt, AtNoKey) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  try {
+    map1.at(1);
+    FAIL();
+  } catch (std::out_of_range &ex) {
+    SUCCEED();
+  }
+}
