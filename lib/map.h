@@ -48,8 +48,12 @@ class map {
     other.root.alloc_ = Allocator();
   };
 
-  // map(std::initializer_list<value_type> init, const Allocator &alloc)
-  //     : map(init, Compare(), alloc) {}
+  map(std::initializer_list<value_type> init, const Compare &comp = Compare(),
+      const Allocator &alloc = Allocator())
+      : root(init, comp, alloc){};
+
+  map(std::initializer_list<value_type> init, const Allocator &alloc)
+      : map(init, Compare(), alloc){};
 
   // ------- Destructors -------
   ~map(){};
@@ -87,26 +91,20 @@ class map {
   };
 
   T &operator[](const Key &key) {
-    printf("\naaa\n");
     iterator it = find(key);
     if (it == nullptr) {
-      printf("\nMASHA\n");
       auto result = insert(value_type(key, val_type()));
       it = result.first;
-      printf("\naaaaa %d \n", key);
     }
     return (*it).second;
   };
 
   T &operator[](Key &&key) {
-    // printf("\naaaaa\n");
     iterator it = find(key);
     if (it == nullptr) {
-      // printf("\nMASHA\n");
       auto result = insert(value_type(std::move(key), val_type()));
       it = result.first;
     }
-    // printf("\naaaaa %d %d \n", key, (*it).second);
     return (*it).second;
   };
 
@@ -178,30 +176,12 @@ class map {
   };
 
   // ------- Observers -------
-  //  key_comp
+  key_compare key_comp() const { return key_compare(); };
+
   // value_comp
 
  private:
   BTree root;
-
-  // void copy_elements(map &&other) {
-  //   int count = 0;
-  //   try {
-  //     for (iterator i = &other.data_[0]; i != &other.data_[other.size_];
-  //          ++i, ++count) {
-  //       root.alloc_.construct(&data_[count], *i);
-  //     }
-  //   } catch (...) {
-  //     destroy_elements(0, count);
-  //     throw;
-  //   }
-  // };
-
-  // void destroy_elements(size_type start, size_type count) {
-  //   for (size_type i = start; i < count; ++i) {
-  //     root.alloc_.destroy(data_ + i);
-  //   }
-  // }
 };
 
 #endif  // CONTAINERS_LIB_MAP_H_

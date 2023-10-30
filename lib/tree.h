@@ -10,7 +10,7 @@ class tree {
   using value_type = std::pair<const Key, T>;
   using size_type = std::size_t;
   using difference_type = std::ptrdiff_t;
-  using key_compare = Compare;
+  using key_compare_type = Compare;
   using allocator_type = Allocator;
   using reference = value_type&;
   using const_reference = const value_type&;
@@ -35,16 +35,35 @@ class tree {
         : data(data), parent(nullptr), left(nullptr), right(nullptr){};
   };
 
-  tree() : data_(nullptr), size_(0), alloc_(Allocator()){};
+  tree()
+      : data_(nullptr), size_(0), alloc_(Allocator()), key_comp_(Compare()){};
 
   tree(const tree& other)
-      : data_(other.data_), size_(other.size_), alloc_(other.alloc_){};
+      : data_(other.data_),
+        size_(other.size_),
+        alloc_(other.alloc_),
+        key_comp_(other.key_comp_){};
 
   tree(tree&& other) noexcept
-      : data_(other.data_), size_(other.size_), alloc_(other.alloc_) {
+      : data_(other.data_),
+        size_(other.size_),
+        alloc_(other.alloc_),
+        key_comp_(other.key_comp_) {
     other.data_ = nullptr;
     other.size_ = 0;
     other.alloc_ = Allocator();
+    other.key_comp_ = Compare();
+  };
+
+  tree(std::initializer_list<value_type> init, const Compare& comp = Compare(),
+       const Allocator& alloc = Allocator())
+      : tree() {
+    alloc_ = alloc;
+    key_comp_ = comp;
+    for (auto element : init) {
+      printf("\naaa\n");
+      insert_unique(element);
+    }
   };
 
   ~tree() {}  // TODO
@@ -120,10 +139,12 @@ class tree {
     std::swap(data_, other.data_);
     std::swap(size_, other.size_);
     std::swap(alloc_, other.alloc_);
+    std::swap(key_comp_, other.key_comp_);
   };
 
   //  private:
   Node* data_;
   size_type size_;
-  Allocator alloc_;
+  allocator_type alloc_;
+  key_compare_type key_comp_;
 };
