@@ -41,7 +41,7 @@ class map {
     root.alloc_ = alloc;
   };
 
-  map(map &&other) noexcept : root(other.root){};
+  map(map &&other) noexcept : root(std::move(other.root)){};
 
   map(map &&other, const Allocator &alloc) noexcept : map(other) {
     root.alloc_ = alloc;
@@ -60,12 +60,13 @@ class map {
 
   // ------- Copy -------
   map &operator=(const map &other) {
-    map copy(other);
-    swap(copy);
+    tree copy(other.root);
+    root.swap(copy);
+    return *this;
   };
 
   map &operator=(map &&other) noexcept {
-    swap(other);
+    root.swap(other.root);
     return *this;
   };
 
