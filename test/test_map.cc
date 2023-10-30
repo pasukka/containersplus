@@ -17,9 +17,43 @@ TEST(MapTestCopy, Copy_1) {
   int val = 60;
   int key = 2;
   map1.insert({key, val});
-  map<int, int> map2 = map1;
+  map<int, int> map2;
+  map2 = map1;
   EXPECT_EQ(map1[key], map2[key]);
   EXPECT_EQ(map1.size(), map2.size());
+}
+
+TEST(MapTestCopy, Copy_2) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map<int, int> map2(map1);
+  EXPECT_EQ(map1[key], map2[key]);
+  EXPECT_EQ(map1.size(), map2.size());
+}
+
+TEST(MapTestMove, Move_1) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map<int, int> map2;
+  map2 = std::move(map1);
+  EXPECT_EQ(map2[key], val);
+  EXPECT_EQ(1, map2.size());
+  EXPECT_EQ(0, map1.size());
+}
+
+TEST(MapTestMove, Move_2) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map<int, int> map2(std::move(map1));
+  EXPECT_EQ(map2[key], val);
+  EXPECT_EQ(1, map2.size());
+  EXPECT_EQ(0, map1.size());
 }
 
 TEST(MapTestInsert, SimpleInsertInt) {
