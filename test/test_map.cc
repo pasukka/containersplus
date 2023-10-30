@@ -160,14 +160,15 @@ TEST(MapTestAt, AtNoKey) {
 }
 
 TEST(MapTestConstructor, SimpleConstructorInitList) {
-  map<int, int> map1 = {{'a', 'b'}, {'c', 'd'}, {'e', 'f'}};
+  map<const char, char> map1;
+  auto list = {std::pair<const char, char>{'a', 'b'}, {'c', 'd'}, {'e', 'f'}};
+  map1 = list;
   EXPECT_EQ('b', map1['a']);
   EXPECT_EQ('f', map1['e']);
 }
 
 TEST(MapTestCompare, Key_Comp) {
-  std::map<int, char> cont;
-  cont = {{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}};
+  std::map<int, char> cont{{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}};
   auto comp_func = cont.key_comp();
   bool res = comp_func(20, 100);
   EXPECT_EQ(true, res);
