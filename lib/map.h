@@ -72,7 +72,7 @@ class map {
   // ------- Element access -------
   T &at(const Key &key) {
     iterator it = find(key);
-    if (it == end()) {
+    if (it == nullptr) {
       throw std::out_of_range("Invalid key.");
     }
     return (*it).second;
@@ -87,20 +87,26 @@ class map {
   };
 
   T &operator[](const Key &key) {
+    printf("\naaa\n");
     iterator it = find(key);
-    if (it == end()) {
+    if (it == nullptr) {
+      printf("\nMASHA\n");
       auto result = insert(value_type(key, val_type()));
       it = result.first;
+      printf("\naaaaa %d \n", key);
     }
     return (*it).second;
   };
 
   T &operator[](Key &&key) {
+    // printf("\naaaaa\n");
     iterator it = find(key);
-    if (it == end()) {
+    if (it == nullptr) {
+      // printf("\nMASHA\n");
       auto result = insert(value_type(std::move(key), val_type()));
       it = result.first;
     }
+    // printf("\naaaaa %d %d \n", key, (*it).second);
     return (*it).second;
   };
 
