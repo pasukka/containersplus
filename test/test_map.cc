@@ -111,6 +111,26 @@ TEST(MapTestInsertOrAssign, InsertIntMove) {
   EXPECT_EQ(val + 1, map1[key]);
 }
 
+TEST(MapTestEmpty, Empty) {
+  map<int, int> map1;
+  EXPECT_TRUE(map1.empty());
+  int val = 60;
+  int key = 2;
+  map1[key] = val;
+  EXPECT_FALSE(map1.empty());
+}
+
+TEST(MapTestClear, Clear) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1[key] = val;
+  map1.empty();
+  EXPECT_EQ(0, map1.size());
+  EXPECT_NE(map1[key], val);
+}
+
+
 // TEST(MapTestIter, IteratorBeginEnd) {
 //   map<int, float> num_map;
 //   std::vector v1 = {4, 9, 1};
@@ -201,7 +221,7 @@ TEST(MapTestCompare, Key_Comp) {
   std::map<int, char> cont{{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}};
   auto comp_func = cont.key_comp();
   bool res = comp_func(20, 100);
-  EXPECT_EQ(true, res);
+  EXPECT_TRUE(res);
 }
 
 TEST(MapTestCompare, Key_Comp_2) {
@@ -214,5 +234,5 @@ TEST(MapTestCompare, Key_Comp_2) {
   cont = {{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}};
   auto comp_func = cont.key_comp();
   bool res = comp_func(20, 100);
-  EXPECT_EQ(false, res);
+  EXPECT_FALSE(res);
 }
