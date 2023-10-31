@@ -152,9 +152,10 @@ class map {
 
   // ------- Modifiers -------
   void clear() noexcept { 
-    // for (const auto& [key, value] : m)
-    //     std::cout << '[' << key << "] = " << value << "; ";
-    root.size_ = 0; 
+    // for (const auto& [key, value] : *this) {
+    //   value_type(key, value)
+    // }
+    root.set_size(0);
   };
 
   // insert

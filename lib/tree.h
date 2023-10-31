@@ -103,7 +103,7 @@ class tree {
   bool exists(const Key& key) { return (find_node(data_, key) == nullptr); }
 
   Node* create_node(const value_type& value) {
-    Node* newNode = new Node(value);
+    Node* newNode = new Node(value);  // TODO: make alloc_.construct
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = nullptr;
@@ -164,6 +164,8 @@ class tree {
 
   Node* data() const noexcept { return data_; };
   size_type size() const noexcept { return size_; };
+  void set_size(size_type size) noexcept { size_ = size; };
+
   allocator_type get_allocator() const noexcept { return alloc_; };
   key_compare_type get_key_comp_() const noexcept { return alloc_; };
 
