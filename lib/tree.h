@@ -6,14 +6,14 @@ template <class Key, class T, class Compare = std::less<Key>,
 class tree {
  public:
   using key_type = Key;
-  using mapped_type = T;
+  // using mapped_type = T;
   using value_type = std::pair<const Key, T>;
   using size_type = std::size_t;
-  using difference_type = std::ptrdiff_t;
+  // using difference_type = std::ptrdiff_t;
   using key_compare_type = Compare;
   using allocator_type = Allocator;
-  using reference = value_type&;
-  using const_reference = const value_type&;
+  // using reference = value_type&;
+  // using const_reference = const value_type&;
 
   using pointer = value_type*;
   using const_pointer = const value_type*;
@@ -22,6 +22,7 @@ class tree {
   using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using alloc_traits = std::allocator_traits<Allocator>;
+  using iter_pair = std::pair<iterator, bool>;
 
   class Node {
    public:
@@ -85,8 +86,6 @@ class tree {
 
   iterator end() { return iterator(data_ + size_); };
 
-  size_type size() const noexcept { return size_; };
-
   bool null(Node* node) {
     return ((node->left == nullptr) && (node->right == nullptr));
   };
@@ -103,12 +102,17 @@ class tree {
 
   bool exists(const Key& key) { return (find_node(data_, key) == nullptr); }
 
-  std::pair<iterator, bool> insert_unique(const value_type& value) {
-    bool insert = false;
+  Node* create_node(const value_type& value) {
     Node* newNode = new Node(value);
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = nullptr;
+    return newNode;
+  };
+
+  iter_pair insert_unique(const value_type& value) {
+    bool insert = false;
+    Node* newNode = create_node(value);
     Key key = value.first;
     iterator it = begin();
     if (data_ == nullptr) {
@@ -117,31 +121,39 @@ class tree {
       insert = true;
       it = begin();
     } else {  // TODO if (!exists(key))
-      Node* current = data_;
-      Node* prev = data_;
-      int left;
-      while (current != nullptr) {
-        if (key < current->data.first) {
-          prev = current;
-          current = current->left;
-          left = 1;
-        } else if (key >= current->data.first) {
-          prev = current;
-          current = current->right;
-          left = 0;
-        }
-      }
-      if (left == 1) {
-        prev->left = newNode;
-      } else {
-        prev->right = newNode;
-      }
-      ++size_;
-      insert = true;
-      it = iterator(newNode);
+      return insert_new_unique(value);
     }
-    return std::pair<iterator, bool>(it, insert);
+    return iter_pair(it, insert);
   };
+
+  iter_pair insert_new_unique(const value_type& value) {
+    bool insert = false;
+    Node* newNode = create_node(value);
+    Key key = value.first;
+    Node* current = data_;
+    Node* prev = data_;
+    int left;
+    while (current != nullptr) {
+      if (key < current->data.first) {
+        prev = current;
+        current = current->left;
+        left = 1;
+      } else if (key >= current->data.first) {
+        prev = current;
+        current = current->right;
+        left = 0;
+      }
+    }
+    if (left == 1) {
+      prev->left = newNode;
+    } else {
+      prev->right = newNode;
+    }
+    ++size_;
+    insert = true;
+    iterator it = iterator(newNode);
+    return iter_pair(it, insert);
+  }
 
   void swap(tree& other) noexcept {
     std::swap(data_, other.data_);
@@ -150,7 +162,12 @@ class tree {
     std::swap(key_comp_, other.key_comp_);
   };
 
-  //  private:
+  Node* data() const noexcept { return data_; };
+  size_type size() const noexcept { return size_; };
+  allocator_type get_allocator() const noexcept { return alloc_; };
+  key_compare_type get_key_comp_() const noexcept { return alloc_; };
+
+ private:
   Node* data_;
   size_type size_;
   allocator_type alloc_;

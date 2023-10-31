@@ -26,6 +26,7 @@ class map {
   using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using alloc_traits = std::allocator_traits<Allocator>;
+  using iter_pair = std::pair<iterator, bool>;
 
   using BTree = tree<Key, T, Compare, Allocator>;
 
@@ -143,7 +144,7 @@ class map {
   // ------- Capacity -------
   bool empty() const { return (root.size_ == 0); }
 
-  size_type size() const noexcept { return root.size_; };
+  size_type size() const noexcept { return root.size(); };
 
   size_type max_size() const noexcept {
     return alloc_traits::max_size(root.alloc_);
@@ -153,14 +154,30 @@ class map {
   void clear() noexcept { root.size_ = 0; };
 
   // insert
-  std::pair<iterator, bool> insert(const value_type &value) {
+  iter_pair insert(const value_type &value) {
     return root.insert_unique(value);
   };
 
+  void insert(std::initializer_list<value_type> ilist) {
+    for (auto element : ilist) {
+      root.insert_unique(element);
+    }
+  };
+
   // insert_or_assign
+  template <class M>
+  iter_pair insert_or_assign(const Key &k, M &&obj) {
+    return to_insert_or_assign(value_type(k, std::forward<val_type>(obj)));
+  }
+
+  template <class M>
+  iter_pair insert_or_assign(Key &&k, M &&obj) {
+    return to_insert_or_assign(
+        value_type(std::move(k), std::forward<val_type>(obj)));
+  }
 
   template <class... Args>
-  std::pair<iterator, bool> emplace(Args &&...args);
+  iter_pair emplace(Args &&...args);
 
   template <class... Args>
   iterator emplace_hint(const_iterator hint, Args &&...args);
@@ -176,7 +193,7 @@ class map {
   // ------- Lookup -------
 
   iterator find(const Key &key) {
-    return iterator(root.find_node(root.data_, key));
+    return iterator(root.find_node(root.data(), key));
   };
 
   // ------- Observers -------
@@ -186,6 +203,16 @@ class map {
 
  private:
   BTree root;
+
+  iter_pair to_insert_or_assign(const value_type &value) {
+    iterator it = find(value.first);
+    if (it != nullptr) {
+      (*it).second = value.second;
+      return iter_pair(it, false);
+    } else {
+      return insert(value);
+    }
+  }
 };
 
 #endif  // CONTAINERS_LIB_MAP_H_
