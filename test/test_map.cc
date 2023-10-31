@@ -125,7 +125,7 @@ TEST(MapTestClear, Clear) {
   int val = 60;
   int key = 2;
   map1[key] = val;
-  map1.empty();
+  map1.clear();
   EXPECT_EQ(0, map1.size());
   EXPECT_NE(map1[key], val);
 }
