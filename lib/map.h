@@ -142,7 +142,7 @@ class map {
   };
 
   // ------- Capacity -------
-  bool empty() const { return (root.size_ == 0); }
+  bool empty() const { return (root.size() == 0); }
 
   size_type size() const noexcept { return root.size(); };
 
@@ -151,7 +151,11 @@ class map {
   };
 
   // ------- Modifiers -------
-  void clear() noexcept { root.size_ = 0; };
+  void clear() noexcept { 
+    // for (const auto& [key, value] : m)
+    //     std::cout << '[' << key << "] = " << value << "; ";
+    root.size_ = 0; 
+  };
 
   // insert
   iter_pair insert(const value_type &value) {

@@ -59,7 +59,7 @@ class tree {
   tree(std::initializer_list<value_type> init, const Compare& comp = Compare(),
        const Allocator& alloc = Allocator())
       : tree() {
-    // TODO: needs to be erased at first
+    // TODO: needs to be cleared at first
     alloc_ = alloc;
     key_comp_ = comp;
     for (auto element : init) {
@@ -75,7 +75,7 @@ class tree {
   };
 
   tree& operator=(std::initializer_list<value_type> ilist) {
-    // TODO: needs to be erased at first
+    // TODO: needs to be cleared at first
     for (auto element : ilist) {
       insert_unique(element);
     }
@@ -115,7 +115,7 @@ class tree {
     Node* newNode = create_node(value);
     Key key = value.first;
     iterator it = begin();
-    if (data_ == nullptr) {
+    if (size_ == 0) {
       data_ = newNode;
       ++size_;
       insert = true;
@@ -132,7 +132,7 @@ class tree {
     Key key = value.first;
     Node* current = data_;
     Node* prev = data_;
-    int left;
+    int left = 0;
     while (current != nullptr) {
       if (key < current->data.first) {
         prev = current;
