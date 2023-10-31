@@ -82,6 +82,35 @@ TEST(MapTestInsert, InsertInt) {
   EXPECT_EQ(val, map1[key]);
 }
 
+TEST(MapTestInsert, InsertList) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1[key] = val;
+  EXPECT_EQ(val, map1[key]);
+  auto list = {std::pair<const int, int>{1, 2}, {3, 4}, {5, 6}};
+  map1.insert(list);
+  EXPECT_EQ(4, map1.size());
+}
+
+TEST(MapTestInsertOrAssign, InsertInt) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1[key] = val;
+  map1.insert_or_assign(key, val + 1);
+  EXPECT_EQ(val + 1, map1[key]);
+}
+
+TEST(MapTestInsertOrAssign, InsertIntMove) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1[key] = val;
+  map1.insert_or_assign(std::move(key), val + 1);
+  EXPECT_EQ(val + 1, map1[key]);
+}
+
 // TEST(MapTestIter, IteratorBeginEnd) {
 //   map<int, float> num_map;
 //   std::vector v1 = {4, 9, 1};
@@ -143,7 +172,8 @@ TEST(MapTestAt, AtKey_3) {
   map1.insert({key + 1, val + 1});
   map1.insert({key + 2, val + 2});
   map1.insert({key + 23, val + 23});
-  EXPECT_EQ(val + 23, map1.at(key + 23));
+  const auto val1 = map1.at(key + 23);
+  EXPECT_EQ(val + 23, val1);
 }
 
 TEST(MapTestAt, AtNoKey) {
