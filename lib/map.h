@@ -36,9 +36,10 @@ class map {
   // ------- Constructors -------
   map() : root(){};
 
-  map(const map &other) : root(other.root){};
+  map(const map &other) { root = other.root; };
 
-  map(const map &other, const Allocator &alloc) : root(other.root) {
+  map(const map &other, const Allocator &alloc) {
+    root = other.root;
     root.set_allocator(alloc);
   };
 
@@ -56,13 +57,15 @@ class map {
   map(std::initializer_list<value_type> init, const Allocator &alloc)
       : map(init, Compare(), alloc){};
 
-  // ------- Destructors -------
+  // ------- Destructor -------
   ~map(){};
 
   // ------- Copy -------
   map &operator=(const map &other) {
-    tree copy(other.root);
-    root.swap(copy);
+    clear();
+    for (value_type element : other) {
+      insert(element);
+    }
     return *this;
   };
 
@@ -76,7 +79,9 @@ class map {
     return *this;
   };
 
-  allocator_type get_allocator() const noexcept { return root.get_allocator(); };
+  allocator_type get_allocator() const noexcept {
+    return root.get_allocator();
+  };
 
   // ------- Element access -------
   T &at(const Key &key) {
@@ -151,10 +156,7 @@ class map {
   };
 
   // ------- Modifiers -------
-  void clear() noexcept {
-    root.clear();
-    root.set_size(0);
-  };
+  void clear() noexcept { root.clear(); };
 
   iter_pair insert(const value_type &value) {
     return root.insert_unique(value);
