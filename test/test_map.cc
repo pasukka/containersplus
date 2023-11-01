@@ -74,6 +74,24 @@ TEST(MapTestInsert, SimpleInsertInt2) {
   EXPECT_EQ(val, map1[key]);
 }
 
+TEST(MapTestInsert, InsertNoChange) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map1.insert({key, 3});
+  EXPECT_EQ(val, map1[key]);
+}
+
+TEST(MapTestInsert, InsertChange) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1.insert({key, val});
+  map1[key] = val + 2;
+  EXPECT_EQ(val + 2, map1[key]);
+}
+
 TEST(MapTestInsert, InsertInt) {
   map<int, int> map1;
   int val = 60;
@@ -153,9 +171,7 @@ TEST(MapTestAccess, AccessNoKey_1) {
   int val = 60;
   int key = 2;
   map1.insert({key, val});
-  printf("\naaaaa\n");
   EXPECT_EQ(0, map1[1]);
-  printf("\n 8 aaaaa\n");
   EXPECT_EQ(val, map1[key]);
 }
 
