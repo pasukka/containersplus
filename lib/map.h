@@ -105,7 +105,9 @@ class map {
   };
 
   T &operator[](Key &&key) {
+    printf("\n!!aaaaa\n");
     iterator it = find(key);
+    printf("\n!!aaaaa\n");
     if (it == nullptr) {
       auto result = insert(value_type(std::move(key), val_type()));
       it = result.first;

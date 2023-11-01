@@ -34,6 +34,12 @@ class tree {
     Node() : data(nullptr), parent(nullptr), left(nullptr), right(nullptr){};
     Node(value_type data)
         : data(data), parent(nullptr), left(nullptr), right(nullptr){};
+
+    ~Node() {
+      if (data != nullptr) {
+        alloc_.deallocate(data, 1);
+      }
+    };
   };
 
   tree()
@@ -91,9 +97,12 @@ class tree {
   };
 
   Node* find_node(Node* node, const Key& key) {
+    printf("\n - aaaaa\n");
     if ((node == nullptr) || key == node->data.first) {
+      printf("\n1aaaaa\n");
       return node;
     }
+    printf("\n2aaaaa\n");
     if (key < node->data.first) {
       return find_node(node->left, key);
     }
@@ -102,8 +111,20 @@ class tree {
 
   bool exists(const Key& key) { return (find_node(data_, key) == nullptr); }
 
+
   Node* create_node(const value_type& value) {
-    Node* newNode = new Node(value);  // TODO: make alloc_.construct
+    std::allocator<Node> node_alloc;
+    Node* newNode = nullptr;
+    try {
+      newNode = node_alloc.allocate(1);
+    } catch (...) {
+      node_alloc.deallocate(newNode, 1);
+    }
+    try {
+      alloc_.construct(&newNode->data, value);
+    } catch (...) {
+      alloc_.destroy(&newNode->data);
+    }
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = nullptr;
