@@ -105,9 +105,7 @@ class map {
   };
 
   T &operator[](Key &&key) {
-    printf("\n!!aaaaa\n");
     iterator it = find(key);
-    // printf("\n!! %d aaaaa\n", (*it).second);
     if (it == nullptr) {
       auto result = root.insert_unique(value_type(std::move(key), val_type()));
       it = result.first;
@@ -153,14 +151,11 @@ class map {
   };
 
   // ------- Modifiers -------
-  void clear() noexcept { 
-    // for (const auto& [key, value] : *this) {
-    //   value_type(key, value)
-    // }
+  void clear() noexcept {
+    root.clear();
     root.set_size(0);
   };
 
-  // insert
   iter_pair insert(const value_type &value) {
     return root.insert_unique(value);
   };
@@ -171,7 +166,6 @@ class map {
     }
   };
 
-  // insert_or_assign
   template <class M>
   iter_pair insert_or_assign(const Key &k, M &&obj) {
     return to_insert_or_assign(value_type(k, std::forward<val_type>(obj)));
@@ -192,6 +186,7 @@ class map {
   // try_emplace
 
   // erase
+  iterator erase(iterator pos) { root.erase(pos); };
 
   // extract
 

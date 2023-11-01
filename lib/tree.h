@@ -40,6 +40,19 @@ class tree {
         alloc_.deallocate(data, 1);
       }
     };
+
+    Node(const Node& other)
+        : data(other.data),
+          parent(other.parent),
+          left(other.left),
+          right(other.right){};
+
+    Node& operator=(const Node& other) {
+      std::swap(data, other.data);
+      std::swap(parent, other.parent);
+      std::swap(left, other.left);
+      std::swap(right, other.right);
+    };
   };
 
   tree()
@@ -65,7 +78,7 @@ class tree {
   tree(std::initializer_list<value_type> init, const Compare& comp = Compare(),
        const Allocator& alloc = Allocator())
       : tree() {
-    // TODO: needs to be cleared at first
+    clear();
     alloc_ = alloc;
     key_comp_ = comp;
     for (auto element : init) {
@@ -73,7 +86,7 @@ class tree {
     }
   };
 
-  ~tree() {}  // TODO
+  ~tree() {}
 
   tree& operator=(const tree& other) {
     tree copy(other);
@@ -81,11 +94,21 @@ class tree {
   };
 
   tree& operator=(std::initializer_list<value_type> ilist) {
-    // TODO: needs to be cleared at first
+    clear();
     for (auto element : ilist) {
       insert_unique(element);
     }
     return *this;
+  };
+
+  void clear() {
+    erase(iterator(data_));
+    data_ = nullptr;
+    size_ = 0;
+  };
+
+  void erase(iterator pos){
+    
   };
 
   iterator begin() { return iterator(data_); };
@@ -97,19 +120,18 @@ class tree {
   };
 
   Node* find_node(Node* node, const Key& key) {
-    // printf("\n - aaaaa\n");
     if ((node == nullptr) || key == node->data.first) {
-      // printf("\n1aaaaa\n");
       return node;
     }
-    // printf("\n2aaaaa\n");
     if (key < node->data.first) {
       return find_node(node->left, key);
     }
     return find_node(node->right, key);
   }
 
-  bool exists(const Key& key) { return (iterator(find_node(data_, key)) != nullptr); }
+  bool exists(const Key& key) {
+    return (iterator(find_node(data_, key)) != nullptr);
+  }
 
   Node* create_node(const value_type& value) {
     std::allocator<Node> node_alloc;
@@ -141,7 +163,6 @@ class tree {
       insert = true;
       it = begin();
     } else if (!exists(key)) {
-      printf("\nHA\n");
       return insert_new_unique(value);
     }
     return iter_pair(it, insert);
