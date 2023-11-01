@@ -98,7 +98,7 @@ class map {
   T &operator[](const Key &key) {
     iterator it = find(key);
     if (it == nullptr) {
-      auto result = root.insert_unique(value_type(key, val_type()), true);
+      auto result = root.insert_unique(value_type(key, val_type()));
       it = result.first;
     }
     return (*it).second;
@@ -109,7 +109,7 @@ class map {
     iterator it = find(key);
     // printf("\n!! %d aaaaa\n", (*it).second);
     if (it == nullptr) {
-      auto result = root.insert_unique(value_type(std::move(key), val_type()), true);
+      auto result = root.insert_unique(value_type(std::move(key), val_type()));
       it = result.first;
     }
     return (*it).second;
@@ -162,12 +162,12 @@ class map {
 
   // insert
   iter_pair insert(const value_type &value) {
-    return root.insert_unique(value, false);
+    return root.insert_unique(value);
   };
 
   void insert(std::initializer_list<value_type> ilist) {
     for (auto element : ilist) {
-      root.insert_unique(element, false);
+      root.insert_unique(element);
     }
   };
 

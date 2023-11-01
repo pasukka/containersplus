@@ -83,7 +83,7 @@ class tree {
   tree& operator=(std::initializer_list<value_type> ilist) {
     // TODO: needs to be cleared at first
     for (auto element : ilist) {
-      insert_unique(element, false);
+      insert_unique(element);
     }
     return *this;
   };
@@ -109,8 +109,7 @@ class tree {
     return find_node(node->right, key);
   }
 
-  bool exists(const Key& key) { return (find_node(data_, key) == nullptr); }
-
+  bool exists(const Key& key) { return (iterator(find_node(data_, key)) != nullptr); }
 
   Node* create_node(const value_type& value) {
     std::allocator<Node> node_alloc;
@@ -131,7 +130,7 @@ class tree {
     return newNode;
   };
 
-  iter_pair insert_unique(const value_type& value, bool to_add) {
+  iter_pair insert_unique(const value_type& value) {
     bool insert = false;
     Node* newNode = create_node(value);
     Key key = value.first;
@@ -141,14 +140,10 @@ class tree {
       ++size_;
       insert = true;
       it = begin();
-    } else {// if (!exists(key))
+    } else if (!exists(key)) {
+      printf("\nHA\n");
       return insert_new_unique(value);
-    } 
-    // else if (to_add) {
-    //   Node* node = find_node(data_, key);
-    //   node->data.second = value.second;
-    //   it = iterator(node);
-    // }
+    }
     return iter_pair(it, insert);
   };
 
