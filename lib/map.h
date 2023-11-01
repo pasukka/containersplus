@@ -39,14 +39,14 @@ class map {
   map(const map &other) : root(other.root){};
 
   map(const map &other, const Allocator &alloc) : root(other.root) {
-    root.alloc_ = alloc;
+    root.set_allocator(alloc);
   };
 
   map(map &&other) noexcept : root(std::move(other.root)){};
 
   map(map &&other, const Allocator &alloc) noexcept : map(other) {
-    root.alloc_ = alloc;
-    other.root.alloc_ = Allocator();
+    root.set_allocator(alloc);
+    other.root.set_allocator(Allocator());
   };
 
   map(std::initializer_list<value_type> init, const Compare &comp = Compare(),
@@ -76,7 +76,7 @@ class map {
     return *this;
   };
 
-  allocator_type get_allocator() const noexcept { return root.alloc_; };
+  allocator_type get_allocator() const noexcept { return root.get_allocator(); };
 
   // ------- Element access -------
   T &at(const Key &key) {
@@ -147,7 +147,7 @@ class map {
   size_type size() const noexcept { return root.size(); };
 
   size_type max_size() const noexcept {
-    return alloc_traits::max_size(root.alloc_);
+    return alloc_traits::max_size(root.get_allocator());
   };
 
   // ------- Modifiers -------

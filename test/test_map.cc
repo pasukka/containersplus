@@ -198,7 +198,8 @@ TEST(MapTestAt, AtKey_2) {
   int key = 2;
   map1.insert({key, val});
   map1.insert({key + 1, val + 1});
-  EXPECT_EQ(val + 1, map1.at(key + 1));
+  const int res = map1.at(key + 1);
+  EXPECT_EQ(val + 1, res);
 }
 
 TEST(MapTestAt, AtKey_3) {
@@ -253,3 +254,37 @@ TEST(MapTestCompare, Key_Comp_2) {
   bool res = comp_func(20, 100);
   EXPECT_FALSE(res);
 }
+
+TEST(MapTestAlloc, GetAlloc_1) {
+  map<int, int> other = {{1, 2}};
+  auto alloc = other.get_allocator();
+  try {
+    map<int, int> map1(other, alloc);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(MapTestAlloc, GetAlloc_2) {
+  map<int, int> other = {{1, 2}};
+  auto alloc = other.get_allocator();
+  try {
+    map<int, int> map1(std::move(other), alloc);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(MapTestAlloc, GetAlloc_3) {
+  map<int, int> other = {{1, 2}};
+  auto alloc = other.get_allocator();
+  try {
+    std::map<int, char> cont({{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}}, alloc);
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
