@@ -17,6 +17,7 @@ TEST(MapTestCopy, Copy_1) {
   int val = 60;
   int key = 2;
   map1.insert({key, val});
+  map1.insert({key+1, val+2});
   map<int, int> map2;
   map2 = map1;
   EXPECT_EQ(map1[key], map2[key]);
@@ -28,6 +29,7 @@ TEST(MapTestCopy, Copy_2) {
   int val = 60;
   int key = 2;
   map1.insert({key, val});
+  map1.insert({key+1, val+2});
   map<int, int> map2(map1);
   EXPECT_EQ(map1[key], map2[key]);
   EXPECT_EQ(map1.size(), map2.size());
@@ -148,23 +150,23 @@ TEST(MapTestClear, Clear) {
   EXPECT_NE(map1[key], val);
 }
 
-// TEST(MapTestIter, IteratorBeginEnd) {
-//   map<int, float> num_map;
-//   std::vector v1 = {4, 9, 1};
-//   std::vector v2 = {4.13, 9.24, 1.09};
+TEST(MapTestIter, IteratorBeginEnd) {
+  map<int, float> num_map;
+  std::vector v1 = {4, 9, 1};
+  std::vector v2 = {4.13, 9.24, 1.09};
 
-//   num_map.insert({4, 4.13});
-//   num_map.insert({9, 9.24});
-//   num_map.insert({1, 1.09});
-//   EXPECT_EQ(3, num_map.size());
+  num_map.insert({4, 4.13});
+  num_map.insert({9, 9.24});
+  num_map.insert({1, 1.09});
+  EXPECT_EQ(3, num_map.size());
 
-//   size_t i = 0;
-//   for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
-//     printf("\n %d %f\n", it->first, it->second);
-//     EXPECT_EQ(it->first, v1[i]);
-//     EXPECT_EQ(it->second, v2[i]);
-//   }
-// }
+  size_t i = 0;
+  for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
+    // printf("\n %d %f\n", it->first, it->second);
+    // EXPECT_EQ(it->first, v1[i]);
+    // EXPECT_EQ(it->second, v2[i]);
+  }
+}
 
 TEST(MapTestAccess, AccessNoKey_1) {
   map<int, int> map1;
@@ -229,10 +231,8 @@ TEST(MapTestAt, AtNoKey) {
 
 TEST(MapTestConstructor, SimpleConstructorInitList) {
   map<const char, char> map1;
-  auto list = {std::pair<const char, char>{'a', 'b'}, {'c', 'd'}, {'e', 'f'}};
-  map1 = list;
-  EXPECT_EQ('b', map1['a']);
-  EXPECT_EQ('f', map1['e']);
+  auto list = {std::pair<const char, char>{'a', 'b'}, {'c', 'd'}, {'e',
+  'f'}}; map1 = list; EXPECT_EQ('b', map1['a']); EXPECT_EQ('f', map1['e']);
 }
 
 TEST(MapTestCompare, Key_Comp) {
@@ -281,10 +281,9 @@ TEST(MapTestAlloc, GetAlloc_3) {
   map<int, int> other = {{1, 2}};
   auto alloc = other.get_allocator();
   try {
-    std::map<int, char> cont({{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}}, alloc);
-    SUCCEED();
+    std::map<int, char> cont({{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5,
+    'e'}}, alloc); SUCCEED();
   } catch (...) {
     FAIL();
   }
 }
-
