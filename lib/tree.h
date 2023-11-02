@@ -4,28 +4,15 @@
 template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
 class tree {
- public:
-  using key_type = Key;
-  using value_type = std::pair<const Key, T>;
-  using size_type = std::size_t;
-  using key_compare_type = Compare;
-  using allocator_type = Allocator;
-
-  using pointer = value_type*;
-  using const_pointer = const value_type*;
-  using iterator = pointer;
-  using const_iterator = const_pointer;
-  using reverse_iterator = std::reverse_iterator<iterator>;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-  using alloc_traits = std::allocator_traits<Allocator>;
-  using iter_pair = std::pair<iterator, bool>;
-
+  template <typename value_type>
   class Node {
    public:
+    using nodePtr = Node<value_type>*;
+
     value_type data;
-    Node* parent;
-    Node* left;
-    Node* right;
+    nodePtr parent;
+    nodePtr left;
+    nodePtr right;
 
     Node() : data(nullptr), parent(nullptr), left(nullptr), right(nullptr){};
     Node(value_type data)
@@ -50,6 +37,59 @@ class tree {
       std::swap(right, other.right);
     };
   };
+
+  template <typename value_type>
+  class TreeIterator {
+  public:
+    using reference = value_type&;
+    using pointer = value_type*;
+    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::bidirectional_iterator_tag;
+
+    using nodePtr = Node<value_type>*;
+    using Base = TreeIterator<value_type>;
+    using Self = TreeIterator<value_type>;
+
+    explicit TreeIterator(nodePtr node) : node_(node) {}
+    TreeIterator(const Self& it) : Node<value_type>(it.node_) {}
+
+    TreeIterator& operator=(const TreeIterator& other) {
+      Base::node_ = other.node_;
+      return *this;
+    }
+
+    reference operator*(void) const { return Base::node_->value; }
+
+    pointer operator->(void) const { return &Base::node_->value; }
+
+   protected:
+    nodePtr node_;
+
+  };
+  // tree<int, int, std::less<int>, std::allocator<std::pair<const int, int> > >::TreeIterator<std::pair<const int, int> >
+
+  template <typename valueType>
+  bool operator!=(tree<Key, T, Compare, Allocator>::TreeIterator<valueType>& lhs,
+                  tree<Key, T, Compare, Allocator>::TreeIterator<valueType>& rhs) {
+  return !(lhs == rhs);
+  }
+
+ public:
+  using key_type = Key;
+  using value_type = std::pair<const Key, T>;
+  using size_type = std::size_t;
+  using key_compare_type = Compare;
+  using allocator_type = Allocator;
+
+  using pointer = value_type*;
+  using nodePtr = Node<value_type>*;
+  using const_pointer = const value_type*;
+  using iterator = TreeIterator<value_type>;
+  using const_iterator = const_pointer;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+  using alloc_traits = std::allocator_traits<Allocator>;
+  using iter_pair = std::pair<iterator, bool>;
 
   tree()
       : data_(nullptr), size_(0), alloc_(Allocator()), key_comp_(Compare()){};
@@ -84,11 +124,9 @@ class tree {
 
   tree& operator=(const tree& other) {
     clear();
-    for (value_type element : other) {
-      insert_unique(element);
+    for (size_t i = 0; i < other.size_; ++i) {
+      insert_unique(other.data_->data);
     }
-    // tree copy(other);
-    // swap(copy);
     return *this;
   };
 
@@ -108,8 +146,8 @@ class tree {
     size_ = 0;
   };
 
-  void erase_subtree(Node* node) {
-    std::allocator<Node> node_alloc;
+  void erase_subtree(nodePtr node) {
+    std::allocator<Node<value_type>> node_alloc;
     while (node != nullptr) {
       erase_subtree(node->right);
       auto tmp = node->left;
@@ -131,11 +169,7 @@ class tree {
   const_iterator end() const noexcept { return iterator(data_ + size_); };
   const_iterator cend() const noexcept { return iterator(data_ + size_); };
 
-  bool null(Node* node) {
-    return ((node->left == nullptr) && (node->right == nullptr));
-  };
-
-  Node* find_node(Node* node, const Key& key) {
+  nodePtr find_node(nodePtr node, const Key& key) {
     if ((node == nullptr) || key == node->data.first) {
       return node;
     }
@@ -146,12 +180,12 @@ class tree {
   }
 
   bool exists(const Key& key) {
-    return (iterator(find_node(data_, key)) != nullptr);
+    return (iterator(find_node(data_, key)) != end());  // != nullptr
   }
 
-  Node* create_node(const value_type& value) {
-    std::allocator<Node> node_alloc;
-    Node* newNode = nullptr;
+  nodePtr create_node(const value_type& value) {
+    std::allocator<Node<value_type>> node_alloc;
+    nodePtr newNode = nullptr;
     try {
       newNode = node_alloc.allocate(1);
     } catch (...) {
@@ -170,12 +204,17 @@ class tree {
 
   iter_pair insert_unique(const value_type& value) {
     bool insert = false;
-    Node* newNode = create_node(value);
     Key key = value.first;
     iterator it = begin();
     if (size_ == 0) {
+      nodePtr newNode = create_node(value);
       data_ = newNode;
       ++size_;
+
+      // for (size_t i = 0; i < size_; ++i) {
+      //   printf("\n%d %d\n", data_->data.first, data_->data.second);
+      // }
+
       insert = true;
       it = begin();
     } else if (!exists(key)) {
@@ -186,10 +225,10 @@ class tree {
 
   iter_pair insert_new_unique(const value_type& value) {
     bool insert = false;
-    Node* newNode = create_node(value);
+    nodePtr newNode = create_node(value);
     Key key = value.first;
-    Node* current = data_;
-    Node* prev = data_;
+    nodePtr current = data_;
+    nodePtr prev = data_;
     int left = 0;
     while (current != nullptr) {
       if (key < current->data.first) {
@@ -220,7 +259,7 @@ class tree {
     std::swap(key_comp_, other.key_comp_);
   };
 
-  Node* data() const noexcept { return data_; };
+  nodePtr data() const noexcept { return data_; };
   size_type size() const noexcept { return size_; };
   void set_size(size_type size) noexcept { size_ = size; };
   void set_allocator(const Allocator& alloc) noexcept { alloc_ = alloc; };
@@ -229,7 +268,7 @@ class tree {
   key_compare_type get_key_comp_() const noexcept { return alloc_; };
 
  private:
-  Node* data_;
+  nodePtr data_;
   size_type size_;
   allocator_type alloc_;
   key_compare_type key_comp_;
