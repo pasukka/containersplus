@@ -17,10 +17,11 @@ TEST(MapTestCopy, Copy_1) {
   int val = 60;
   int key = 2;
   map1.insert({key, val});
-  map1.insert({key+1, val+2});
+  map1.insert({key + 1, val + 2});
   map<int, int> map2;
   map2 = map1;
   EXPECT_EQ(map1[key], map2[key]);
+  EXPECT_EQ(map1[key + 1], map2[key + 1]);
   EXPECT_EQ(map1.size(), map2.size());
 }
 
@@ -29,7 +30,7 @@ TEST(MapTestCopy, Copy_2) {
   int val = 60;
   int key = 2;
   map1.insert({key, val});
-  map1.insert({key+1, val+2});
+  map1.insert({key + 1, val + 2});
   map<int, int> map2(map1);
   EXPECT_EQ(map1[key], map2[key]);
   EXPECT_EQ(map1.size(), map2.size());
@@ -99,7 +100,7 @@ TEST(MapTestInsert, InsertInt) {
   int val = 60;
   int key = 2;
   map1[key] = val;
-  // EXPECT_EQ(val, map1[key]);
+  EXPECT_EQ(val, map1[key]);
 }
 
 TEST(MapTestInsert, InsertList) {
@@ -162,9 +163,8 @@ TEST(MapTestIter, IteratorBeginEnd) {
 
   size_t i = 0;
   for (auto it = num_map.begin(); it != num_map.end(); ++it, ++i) {
-    // printf("\n %d %f\n", it->first, it->second);
-    // EXPECT_EQ(it->first, v1[i]);
-    // EXPECT_EQ(it->second, v2[i]);
+    EXPECT_FLOAT_EQ(it->first, v1[i]);
+    EXPECT_FLOAT_EQ(it->second, v2[i]);
   }
 }
 
