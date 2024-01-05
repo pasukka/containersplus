@@ -40,7 +40,7 @@ class tree {
 
   template <typename value_type>
   class TreeIterator {
-  public:
+   public:
     using reference = value_type&;
     using pointer = value_type*;
     using difference_type = std::ptrdiff_t;
@@ -50,29 +50,49 @@ class tree {
     using Base = TreeIterator<value_type>;
     using Self = TreeIterator<value_type>;
 
-    explicit TreeIterator(nodePtr node) : node_(node) {}
-    TreeIterator(const Self& it) : Node<value_type>(it.node_) {}
+    TreeIterator(nodePtr node) : node_(node) {}
+    // TreeIterator(const Self& it) : Node<value_type>(it.node_) {}
 
     TreeIterator& operator=(const TreeIterator& other) {
       Base::node_ = other.node_;
       return *this;
     }
 
-    reference operator*(void) const { return Base::node_->value; }
+    reference operator*(void) const { return Base::node_->data; }
 
-    pointer operator->(void) const { return &Base::node_->value; }
+    pointer operator->(void) const { return &Base::node_->data; }
+
+    template <typename valueType>
+    bool operator!=(
+        tree<Key, T, Compare, Allocator>::TreeIterator<valueType> rhs) {
+      return !(this->node_ == rhs.node_);
+    }
+
+    template <typename valueType>
+    bool operator==(
+        tree<Key, T, Compare, Allocator>::TreeIterator<valueType> rhs) {
+      return (this->node_ == rhs.node_);
+    }
+
+    TreeIterator& operator++() noexcept {
+      nodePtr p;
+      if (node_->right != nullptr) {
+        node_ = node_->right;
+        while (node_->left != nullptr) node_ = node_->left;
+      } else {
+        p = node_->parent;
+        while (p != nullptr && node_ == p->right) {
+          node_ = p;
+          p = p->parent;
+        }
+        node_ = p;
+      }
+      return *this;
+    }
 
    protected:
     nodePtr node_;
-
   };
-  // tree<int, int, std::less<int>, std::allocator<std::pair<const int, int> > >::TreeIterator<std::pair<const int, int> >
-
-  template <typename valueType>
-  bool operator!=(tree<Key, T, Compare, Allocator>::TreeIterator<valueType>& lhs,
-                  tree<Key, T, Compare, Allocator>::TreeIterator<valueType>& rhs) {
-  return !(lhs == rhs);
-  }
 
  public:
   using key_type = Key;
@@ -85,7 +105,7 @@ class tree {
   using nodePtr = Node<value_type>*;
   using const_pointer = const value_type*;
   using iterator = TreeIterator<value_type>;
-  using const_iterator = const_pointer;
+  using const_iterator = const iterator;
   using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using alloc_traits = std::allocator_traits<Allocator>;
@@ -124,8 +144,8 @@ class tree {
 
   tree& operator=(const tree& other) {
     clear();
-    for (size_t i = 0; i < other.size_; ++i) {
-      insert_unique(other.data_->data);
+    for (auto element : other) {
+      insert_unique(element);
     }
     return *this;
   };
@@ -162,12 +182,12 @@ class tree {
   };
 
   iterator begin() { return iterator(data_); };
-  const_iterator begin() const noexcept { return iterator(data_); };
-  const_iterator cbegin() const noexcept { return iterator(data_); };
+  const_iterator begin() const noexcept { return const_iterator(data_); };
+  const_iterator cbegin() const noexcept { return const_iterator(data_); };
 
-  iterator end() { return iterator(data_ + size_); };
-  const_iterator end() const noexcept { return iterator(data_ + size_); };
-  const_iterator cend() const noexcept { return iterator(data_ + size_); };
+  iterator end() { return iterator(nullptr); };  // data_ + size_
+  const_iterator end() const noexcept { return const_iterator(nullptr); };
+  const_iterator cend() const noexcept { return const_iterator(nullptr); };
 
   nodePtr find_node(nodePtr node, const Key& key) {
     if ((node == nullptr) || key == node->data.first) {
@@ -180,7 +200,7 @@ class tree {
   }
 
   bool exists(const Key& key) {
-    return (iterator(find_node(data_, key)) != end());  // != nullptr
+    return (iterator(find_node(data_, key)) != end());
   }
 
   nodePtr create_node(const value_type& value) {
@@ -210,14 +230,9 @@ class tree {
       nodePtr newNode = create_node(value);
       data_ = newNode;
       ++size_;
-
-      // for (size_t i = 0; i < size_; ++i) {
-      //   printf("\n%d %d\n", data_->data.first, data_->data.second);
-      // }
-
       insert = true;
       it = begin();
-    } else if (!exists(key)) {
+    } else if (!exists(key)) {  //
       return insert_new_unique(value);
     }
     return iter_pair(it, insert);
@@ -227,17 +242,17 @@ class tree {
     bool insert = false;
     nodePtr newNode = create_node(value);
     Key key = value.first;
-    nodePtr current = data_;
+    nodePtr node_ent = data_;
     nodePtr prev = data_;
     int left = 0;
-    while (current != nullptr) {
-      if (key < current->data.first) {
-        prev = current;
-        current = current->left;
+    while (node_ent != nullptr) {
+      if (key < node_ent->data.first) {
+        prev = node_ent;
+        node_ent = node_ent->left;
         left = 1;
-      } else if (key >= current->data.first) {
-        prev = current;
-        current = current->right;
+      } else if (key >= node_ent->data.first) {
+        prev = node_ent;
+        node_ent = node_ent->right;
         left = 0;
       }
     }
