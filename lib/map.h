@@ -18,19 +18,17 @@ class map {
   using allocator_type = Allocator;
   using reference = value_type &;
   using const_reference = const value_type &;
-  
+
   using BTree = tree<Key, T, Compare, Allocator>;
-  
+
   using pointer = value_type *;
   using const_pointer = const value_type *;
   using iterator = typename BTree::iterator;
-  using const_iterator = const_pointer;
+  using const_iterator = const iterator;
   using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using alloc_traits = std::allocator_traits<Allocator>;
   using iter_pair = std::pair<iterator, bool>;
-
-  
 
  public:
   // --------------------- MEMBER FUNCTION ---------------------
@@ -65,9 +63,7 @@ class map {
   // ------- Copy -------
   map &operator=(const map &other) {
     clear();
-    for (value_type element : other) {
-      insert(element);
-    }
+    root = other.root;
     return *this;
   };
 
@@ -88,7 +84,7 @@ class map {
   // ------- Element access -------
   T &at(const Key &key) {
     iterator it = find(key);
-    if (it == nullptr) {
+    if (it == end()) {
       throw std::out_of_range("Invalid key.");
     }
     return (*it).second;
@@ -104,7 +100,7 @@ class map {
 
   T &operator[](const Key &key) {
     iterator it = find(key);
-    if (it == nullptr) {
+    if (it == end()) {
       auto result = root.insert_unique(value_type(key, val_type()));
       it = result.first;
     }
@@ -113,7 +109,7 @@ class map {
 
   T &operator[](Key &&key) {
     iterator it = find(key);
-    if (it == nullptr) {
+    if (it == end()) {
       auto result = root.insert_unique(value_type(std::move(key), val_type()));
       it = result.first;
     }
@@ -123,11 +119,11 @@ class map {
   // ------- Iterators -------
   iterator begin() { return root.begin(); };
   const_iterator begin() const noexcept { return root.begin(); };
-  const_iterator cbegin() const noexcept { return root.begin(); };
+  const_iterator cbegin() const noexcept { return root.cbegin(); };
 
   iterator end() { return root.end(); };
   const_iterator end() const noexcept { return root.end(); };
-  const_iterator cend() const noexcept { return root.end(); };
+  const_iterator cend() const noexcept { return root.cend(); };
 
   reverse_iterator rbegin() noexcept { return reverse_iterator(end()); };
   reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
@@ -212,7 +208,7 @@ class map {
 
   iter_pair to_insert_or_assign(const value_type &value) {
     iterator it = find(value.first);
-    if (it != nullptr) {
+    if (it != end()) {
       (*it).second = value.second;
       return iter_pair(it, false);
     } else {
