@@ -151,6 +151,19 @@ TEST(MapTestClear, Clear) {
   EXPECT_NE(map1[key], val);
 }
 
+TEST(MapTestErase, Erase_1) {
+  map<int, int> map1;
+  int val = 60;
+  int key = 2;
+  map1[key] = val;
+  map1[key+1] = val+90;
+  map1[key+6] = val+74;
+  auto begin = map1.begin();
+  ++begin;
+  map1.erase(begin);
+  // EXPECT_TRUE(map1.empty());
+}
+
 TEST(MapTestIter, IteratorBeginEnd) {
   map<int, float> num_map;
   std::vector v1 = {4, 9, 1};
