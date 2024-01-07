@@ -48,10 +48,8 @@ class tree {
 
     using nodePtr = Node<value_type>*;
     using Base = TreeIterator<value_type>;
-    using Self = TreeIterator<value_type>;
 
     TreeIterator(nodePtr node) : node_(node) {}
-    // TreeIterator(const Self& it) : Node<value_type>(it.node_) {}
 
     TreeIterator& operator=(const TreeIterator& other) {
       Base::node_ = other.node_;
@@ -82,6 +80,22 @@ class tree {
       } else {
         p = node_->parent;
         while (p != nullptr && node_ == p->right) {
+          node_ = p;
+          p = p->parent;
+        }
+        node_ = p;
+      }
+      return *this;
+    }
+
+    TreeIterator& operator--() noexcept {
+      nodePtr p;
+      if (node_->left != nullptr) {
+        node_ = node_->left;
+        while (node_->right != nullptr) node_ = node_->right;
+      } else {
+        p = node_->parent;
+        while (p != nullptr && node_ == p->left) {
           node_ = p;
           p = p->parent;
         }
