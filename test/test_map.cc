@@ -231,8 +231,10 @@ TEST(MapTestAt, AtNoKey) {
 
 TEST(MapTestConstructor, SimpleConstructorInitList) {
   map<const char, char> map1;
-  auto list = {std::pair<const char, char>{'a', 'b'}, {'c', 'd'}, {'e',
-  'f'}}; map1 = list; EXPECT_EQ('b', map1['a']); EXPECT_EQ('f', map1['e']);
+  auto list = {std::pair<const char, char>{'a', 'b'}, {'c', 'd'}, {'e', 'f'}};
+  map1 = list;
+  EXPECT_EQ('b', map1['a']);
+  EXPECT_EQ('f', map1['e']);
 }
 
 TEST(MapTestCompare, Key_Comp) {
@@ -281,8 +283,9 @@ TEST(MapTestAlloc, GetAlloc_3) {
   map<int, int> other = {{1, 2}};
   auto alloc = other.get_allocator();
   try {
-    std::map<int, char> cont({{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5,
-    'e'}}, alloc); SUCCEED();
+    std::map<int, char> cont({{1, 'a'}, {2, 'b'}, {3, 'c'}, {4, 'd'}, {5, 'e'}},
+                             alloc);
+    SUCCEED();
   } catch (...) {
     FAIL();
   }
