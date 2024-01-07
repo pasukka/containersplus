@@ -104,7 +104,7 @@ class tree {
       return *this;
     }
 
-   protected:
+  //  protected:
     nodePtr node_;
   };
 
@@ -180,19 +180,20 @@ class tree {
     size_ = 0;
   };
 
-  void erase_subtree(nodePtr node) {
+  void erase_subtree(iterator node) {
     std::allocator<Node<value_type>> node_alloc;
-    while (node != nullptr) {
-      erase_subtree(node->right);
-      auto tmp = node->left;
-      alloc_.destroy(&node->data);
-      node_alloc.deallocate(node, 1);
-      node = tmp;
+    while (node.node_ != nullptr) {
+      erase_subtree(node.node_->right);
+      auto tmp = node.node_->left;
+      alloc_.destroy(&node.node_->data);
+      node_alloc.deallocate(node.node_, 1);
+      node.node_ = tmp;
+      --size_;
     }
   }
 
-  void erase(iterator pos){
-
+  void erase(iterator pos) {
+    erase_subtree(pos);
   };
 
   iterator begin() { return iterator(data_); };

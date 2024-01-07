@@ -185,8 +185,15 @@ class map {
 
   // try_emplace
 
-  // erase
-  iterator erase(iterator pos) { root.erase(pos); };
+  iterator erase(iterator pos) {
+    root.erase(pos);
+    for (auto elem : *this) {
+      printf("!! %d", elem.first);
+    }
+  };
+
+  // iterator erase( const_iterator pos );
+  iterator erase( const_iterator first, const_iterator last );
 
   // extract
 
