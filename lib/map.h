@@ -1,5 +1,5 @@
-#ifndef CONTAINERS_LIB_MAP_H_
-#define CONTAINERS_LIB_MAP_H_
+#ifndef SRC_LIB_MAP_H_
+#define SRC_LIB_MAP_H_
 
 #include <functional>
 #include <iostream>
@@ -10,7 +10,7 @@ template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
 class map {
   using key_type = Key;
-  using val_type = T;
+  using mapped_type = T;
   using value_type = std::pair<const Key, T>;
   using size_type = std::size_t;
   using difference_type = std::ptrdiff_t;
@@ -21,12 +21,12 @@ class map {
 
   using BTree = tree<Key, T, Compare, Allocator>;
 
+  using node_type = typename tree<Key, T, Compare, Allocator>::nodePtr;
+
   using pointer = value_type *;
   using const_pointer = const value_type *;
   using iterator = typename BTree::iterator;
   using const_iterator = const iterator;
-  using reverse_iterator = std::reverse_iterator<iterator>;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using alloc_traits = std::allocator_traits<Allocator>;
   using iter_pair = std::pair<iterator, bool>;
 
@@ -36,9 +36,9 @@ class map {
   // ------- Constructors -------
   map() : root(){};
 
-  map(const map &other) { root = other.root; };
+  map(const map &other) : root() { root = other.root; };
 
-  map(const map &other, const Allocator &alloc) {
+  map(const map &other, const Allocator &alloc) : root() {
     root = other.root;
     root.set_allocator(alloc);
   };
@@ -62,7 +62,6 @@ class map {
 
   // ------- Copy -------
   map &operator=(const map &other) {
-    clear();
     root = other.root;
     return *this;
   };
@@ -84,7 +83,7 @@ class map {
   // ------- Element access -------
   T &at(const Key &key) {
     iterator it = find(key);
-    if (it == end()) {
+    if (it == end() || it == nullptr) {
       throw std::out_of_range("Invalid key.");
     }
     return (*it).second;
@@ -92,7 +91,7 @@ class map {
 
   const T &at(const Key &key) const {
     const_iterator it = find(key);
-    if (it == end()) {
+    if (it == end() || it == nullptr) {
       throw std::out_of_range("Invalid key.");
     }
     return (*it).second;
@@ -100,8 +99,8 @@ class map {
 
   T &operator[](const Key &key) {
     iterator it = find(key);
-    if (it == end()) {
-      auto result = root.insert_unique(value_type(key, val_type()));
+    if (it == end() || it == nullptr) {
+      auto result = root.insert_unique(value_type(key, mapped_type()));
       it = result.first;
     }
     return (*it).second;
@@ -109,8 +108,9 @@ class map {
 
   T &operator[](Key &&key) {
     iterator it = find(key);
-    if (it == end()) {
-      auto result = root.insert_unique(value_type(std::move(key), val_type()));
+    if (it == end() || it == nullptr) {
+      auto result =
+          root.insert_unique(value_type(std::move(key), mapped_type()));
       it = result.first;
     }
     return (*it).second;
@@ -124,25 +124,6 @@ class map {
   iterator end() { return root.end(); };
   const_iterator end() const noexcept { return root.end(); };
   const_iterator cend() const noexcept { return root.cend(); };
-
-  reverse_iterator rbegin() noexcept { return reverse_iterator(end()); };
-  reverse_iterator rend() noexcept { return reverse_iterator(begin()); };
-
-  const_reverse_iterator rbegin() const noexcept {
-    return const_reverse_iterator(end());
-  };
-
-  const_reverse_iterator crbegin() const noexcept {
-    return const_reverse_iterator(cend());
-  };
-
-  const_reverse_iterator rend() const noexcept {
-    return const_reverse_iterator(begin());
-  };
-
-  const_reverse_iterator crend() const noexcept {
-    return const_reverse_iterator(cbegin());
-  };
 
   // ------- Capacity -------
   bool empty() const { return (root.size() == 0); }
@@ -166,56 +147,67 @@ class map {
     }
   };
 
-  template <class M>
-  iter_pair insert_or_assign(const Key &k, M &&obj) {
-    return to_insert_or_assign(value_type(k, std::forward<val_type>(obj)));
-  }
-
-  template <class M>
-  iter_pair insert_or_assign(Key &&k, M &&obj) {
-    return to_insert_or_assign(
-        value_type(std::move(k), std::forward<val_type>(obj)));
-  }
-
-  template <class... Args>
-  iter_pair emplace(Args &&...args);
-
-  template <class... Args>
-  iterator emplace_hint(const_iterator hint, Args &&...args);
-
-  // try_emplace
-
-  iterator erase(iterator pos) {
-    root.erase(pos);
-    for (auto elem : *this) {
-      printf("!! %d", elem.first);
-    }
+  iter_pair insert(const Key &k, const T &obj) {
+    return root.insert_unique(value_type(k, obj));
   };
 
-  // iterator erase( const_iterator pos );
-  iterator erase( const_iterator first, const_iterator last );
+  iter_pair insert_or_assign(const Key &k, const T &obj) {
+    return to_insert_or_assign(value_type(k, obj));
+  }
 
-  // extract
+  iter_pair insert_or_assign(Key &&k, T &&obj) {
+    return to_insert_or_assign(
+        value_type(std::move(k), std::forward<mapped_type>(obj)));
+  }
 
-  // merge
+  iterator erase(iterator pos) { return root.erase(pos); };
+
+  iterator erase(const_iterator first, const_iterator last) {
+    iterator it_first = iterator(first.getNode());
+    iterator it_last = iterator(last.getNode());
+
+    while (it_first != it_last) {
+      it_first = erase(it_first);
+    }
+
+    return it_last;
+  }
+
+  iterator extract(const_iterator position) {
+    if (position == end()) {
+      return end();
+    }
+    return root.erase(position);
+  }
+
+  iterator extract(const Key &k) {
+    iterator it = find(k);
+    if (it == end()) {
+      return end();
+    }
+    return root.erase(it);
+  }
+
+  void merge(map &other) { root.merge(other.root); };
+
+  void swap(map &other) { root.swap(other.root); };
 
   // ------- Lookup -------
-
-  iterator find(const Key &key) {
+  iterator find(const Key &key) const {
     return iterator(root.find_node(root.data(), key));
   };
 
+  bool contains(const Key &key) { return (find(key) != nullptr); }
+
   // ------- Observers -------
   key_compare key_comp() const { return key_compare(); };
-
-  // value_comp
 
  private:
   BTree root;
 
   iter_pair to_insert_or_assign(const value_type &value) {
     iterator it = find(value.first);
-    if (it != end()) {
+    if (it != end() && it != nullptr) {
       (*it).second = value.second;
       return iter_pair(it, false);
     } else {
@@ -224,4 +216,4 @@ class map {
   }
 };
 
-#endif  // CONTAINERS_LIB_MAP_H_
+#endif  // SRC_LIB_MAP_H_

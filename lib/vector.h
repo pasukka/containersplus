@@ -1,5 +1,5 @@
-#ifndef CONTAINERS_LIB_VECTOR_H_
-#define CONTAINERS_LIB_VECTOR_H_
+#ifndef SRC_LIB_VECTOR_H_
+#define SRC_LIB_VECTOR_H_
 
 #include <stdint.h>
 
@@ -195,6 +195,7 @@ class vector {
         std::uninitialized_copy(data_, data_ + size_, new_data_);
       } catch (...) {
         alloc_.deallocate(new_data_, n);
+        destroy_data(0, size_);
         throw;
       }
       swap_data(new_data_, n);
@@ -496,4 +497,4 @@ bool operator>=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return !(lhs < rhs);
 };
 
-#endif  // CONTAINERS_LIB_VECTOR_H_
+#endif  // SRC_LIB_VECTOR_H_
