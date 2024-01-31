@@ -24,7 +24,7 @@ TEST(VectorTestConstructor, SimpleConstructorChar) {
   EXPECT_EQ(0, v.capacity());
 }
 
-TEST(VectorVectorTestConstructor, SimpleConstructorChar) {
+TEST(VectorTestConstructorConst, SimpleConstructorChar) {
   const vector<char> v;
   EXPECT_EQ(0, v.size());
   EXPECT_EQ(0, v.capacity());
@@ -187,6 +187,9 @@ TEST(VectorTestConstructorConst, At_4) {
     SUCCEED();
   }
 }
+
+// Test contain error in Valgrind because we try to take more memmory than can
+// get but Valgrind cannot throw exceptions and so is aborting instead
 
 TEST(VectorTestMemory, ReserveError) {
   vector<char> v = {1, 2, 3};
